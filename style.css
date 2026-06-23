@@ -1013,3 +1013,6 @@ header{
         bottom:20px;
     }
 }
+*{
+    outline:1px solid red;
+}
