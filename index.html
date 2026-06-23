@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Zsolti Sajter | UX/UI Designer</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            zsoltisajter
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+    </nav>
+
+    <div class="divider"></div>
+
+</header>
+
+<main>
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>Hi, I'm Zsolti!</h1>
+
+            <p>
+                UX/UI designer creating simple,
+                accessible, and user-centered
+                digital experiences.
+            </p>
+
+            <a href="#projects" class="cta-btn">
+                View Projects
+            </a>
+
+        </div>
+
+        <div class="hero-image">
+
+            <div class="green-shape"></div>
+
+            <img src="images/zsolti.png" alt="Zsolti">
+
+        </div>
+
+    </section>
+
+    <!-- ABOUT -->
+
+    <section id="about" class="about">
+
+        <div class="divider"></div>
+
+        <h2>About</h2>
+
+        <div class="about-card">
+
+            <p>
+                I'm a UX/UI designer with a background in theatre and music. Working in live performance environments taught me how to understand people, communicate effectively, and solve problems under pressure.
+            </p>
+
+            <p>
+                These experiences shaped the way I approach design today. I enjoy creating simple, accessible, and intuitive digital products that focus on real user needs.
+            </p>
+
+            <p>
+                After completing the Google UX Design Professional Certificate, I began building projects that combine research, usability, and visual design. I'm currently growing my portfolio and looking for opportunities to develop as a UX/UI designer.
+            </p>
+
+        </div>
+
+    </section>
+<!-- PROJECTS -->
+
+<section id="projects" class="projects">
+
+    <div class="divider"></div>
+
+    <h2>Projects</h2>
+
+    <!-- PROJECT 1 -->
+
+    <a href="arteum-mobile.html" class="project-link">
+
+        <div class="project-row">
+
+            <img src="images/arteum.png" alt="Arteum Mobile">
+
+            <div class="project-overlay">
+
+                <h3>Arteum Mobile</h3>
+
+                <p>
+                    Mobile app designed to help museum visitors explore exhibitions
+                    and plan their visits with confidence.
+                </p>
+
+                <span class="arrow">→</span>
+
+            </div>
+
+        </div>
+
+    </a>
+
+    <div class="divider"></div>
+
+    <!-- PROJECT 2 -->
+
+    <a href="arteum-web.html" class="project-link">
+
+        <div class="project-row reverse">
+
+            <img src="images/arteum-desktop.png" alt="Arteum Web">
+
+            <div class="project-overlay">
+
+                <h3>Arteum Web</h3>
+
+                <p>
+                    Responsive web experience extending the Arteum Mobile app
+                    across desktop and larger screens.
+                </p>
+
+                <span class="arrow">→</span>
+
+            </div>
+
+        </div>
+
+    </a>
+
+    <div class="divider"></div>
+
+    <!-- PROJECT 3 -->
+
+    <a href="meditime.html" class="project-link">
+
+        <div class="project-row">
+
+            <img src="images/meditime.png" alt="MediTime">
+
+            <div class="project-overlay">
+
+                <h3>MediTime</h3>
+
+                <p>
+                    Medication reminder app designed to help users manage daily
+                    medication routines with confidence.
+                </p>
+
+                <span class="arrow">→</span>
+
+            </div>
+
+        </div>
+
+    </a>
+
+    <div class="divider"></div>
+
+</section>
+
+<section id="contact" class="contact">
+
+    <h2>Contact</h2>
+
+    <div class="contact-card">
+        <p class="contact-text">
+            Feel free to reach out through any of the platforms below.
+        </p>
+
+        <div class="contact-links">
+
+            <a href="mailto:sajterzsolti@gmail.com">
+                Email
+            </a>
+
+            <a href="https://www.linkedin.com/in/szabolcs-zsolt-sajter-587734335" target="_blank">
+                LinkedIn
+            </a>
+
+            <a href="https://facebook.com/zsoltisajter" target="_blank">
+                Facebook
+            </a>
+
+            <a href="https://instagram.com/zsokszi_" target="_blank">
+                Instagram
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+</main>
+<button id="backToTop" title="Back to top">
+    ↑
+</button>
+<script>
+
+const backToTop = document.getElementById("backToTop");
+
+window.addEventListener("scroll", () => {
+
+    if(window.scrollY > 300){
+        backToTop.style.display = "block";
+    } else {
+        backToTop.style.display = "none";
+    }
+
+});
+
+backToTop.addEventListener("click", () => {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+});
+
+</script>
+<script>
+
+const projects = document.querySelectorAll('.project-row');
+
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        if(entry.isIntersecting){
+
+            entry.target.classList.add('show');
+
+        }
+
+    });
+
+},{
+    threshold:0.2
+});
+
+projects.forEach(project => {
+
+    observer.observe(project);
+
+});
+
+</script>
+</body>
+</html>
