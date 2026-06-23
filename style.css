@@ -811,3 +811,191 @@ header{
         padding:0 30px;
     }
 }
+/* ==========================
+   TABLET
+========================== */
+
+@media (max-width:1024px){
+
+    .hero{
+        flex-direction:column;
+        text-align:center;
+        gap:60px;
+        margin:60px auto 100px;
+    }
+
+    .hero-content{
+        max-width:700px;
+    }
+
+    .hero-image{
+        width:400px;
+        height:400px;
+    }
+
+    .hero-image img{
+        height:400px;
+    }
+
+    .about,
+    .projects,
+    .contact{
+        padding-left:40px;
+        padding-right:40px;
+    }
+
+    .project-row{
+        width:100%;
+        max-width:850px;
+        height:auto;
+    }
+
+    .project-row img{
+        width:100%;
+        height:auto;
+    }
+}
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width:768px){
+
+    header{
+        padding:20px;
+    }
+
+    .navbar{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .nav-links{
+        gap:20px;
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .logo{
+        font-size:1.6rem;
+    }
+
+    /* HERO */
+
+    .hero{
+        padding:0 20px;
+        margin:40px auto 80px;
+    }
+
+    .hero-content h1{
+        font-size:56px;
+        line-height:1.1;
+    }
+
+    .hero-content p{
+        font-size:18px;
+    }
+
+    .hero-image{
+        width:280px;
+        height:280px;
+    }
+
+    .hero-image img{
+        height:280px;
+    }
+
+    .green-shape{
+        width:240px;
+        height:120px;
+        left:20px;
+        bottom:30px;
+    }
+
+    /* ABOUT */
+
+    .about{
+        padding:0 20px;
+    }
+
+    .about h2{
+        font-size:56px;
+        text-align:center;
+    }
+
+    .about-card{
+        padding:30px;
+    }
+
+    /* PROJECTS */
+
+    .projects{
+        padding:0 20px 60px;
+    }
+
+    .projects h2{
+        font-size:56px;
+        margin:60px 0;
+    }
+
+    .project-row{
+        width:100%;
+        height:auto;
+        margin-bottom:60px;
+    }
+
+    .project-row img{
+        width:100%;
+        height:auto;
+    }
+
+    .project-overlay{
+
+        position:relative;
+
+        width:100%;
+        height:auto;
+
+        top:auto;
+        right:auto;
+        left:auto;
+
+        padding:24px;
+    }
+
+    .project-row.reverse .project-overlay{
+        left:auto;
+    }
+
+    .project-overlay h3{
+        font-size:28px;
+    }
+
+    .arrow{
+        margin-top:30px;
+    }
+
+    /* CONTACT */
+
+    .contact{
+        padding:0 20px;
+    }
+
+    .contact h2{
+        font-size:56px;
+    }
+
+    .contact-links{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    /* BACK TO TOP */
+
+    #backToTop{
+        width:50px;
+        height:50px;
+        right:20px;
+        bottom:20px;
+    }
+}
