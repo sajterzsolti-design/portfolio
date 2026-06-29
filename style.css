@@ -913,14 +913,10 @@ header{
     height:auto;
 }
 
-.hero-image img{
-    width:260px;
+    .hero-image img{
+    width:100%;
     height:auto;
-
-    left:50%;
-    bottom:0;
-
-    transform:translateX(-50%);
+    position:relative;
 }
     
     /* ABOUT */
