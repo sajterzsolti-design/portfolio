@@ -908,7 +908,9 @@ header{
     }
 
     .hero-image{
-    overflow:hidden;
+    width:100%;
+    max-width:320px;
+    height:auto;
 }
 
 .hero-image img{
@@ -920,18 +922,7 @@ header{
 
     transform:translateX(-50%);
 }
-
-    .green-shape{
-    width:330px;
-    height:150px;
-
-    left:50%;
-    bottom:35px;
-
-    transform:translateX(-50%);
-
-    border-radius:999px;
-
+    
     /* ABOUT */
 
     .about{
