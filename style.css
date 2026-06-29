@@ -919,11 +919,16 @@ header{
     position:relative;
 }
     .green-shape{
-        width:240px;
-        height:120px;
-        left:20px;
-        bottom:30px;
-    }
+    width:330px;
+    height:150px;
+
+    left:50%;
+    bottom:35px;
+
+    transform:translateX(-50%);
+
+    border-radius:999px;
+}
 
     /* ABOUT */
 
