@@ -910,13 +910,19 @@ header{
     .hero-image{
     width:100%;
     max-width:320px;
-    height:auto;
+    height:340px;
+    margin:0 auto;
+    position:relative;
 }
 
 .hero-image img{
-    width:100%;
+    width:260px;
     height:auto;
-    position:relative;
+
+    left:50%;
+    bottom:0;
+
+    transform:translateX(-50%);
 }
 
     .green-shape{
