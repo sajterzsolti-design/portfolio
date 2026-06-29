@@ -918,7 +918,13 @@ header{
     height:auto;
     position:relative;
 }
-    
+    .green-shape{
+        width:240px;
+        height:120px;
+        left:20px;
+        bottom:30px;
+    }
+
     /* ABOUT */
 
     .about{
