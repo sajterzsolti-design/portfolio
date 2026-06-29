@@ -918,6 +918,9 @@ header{
     height:auto;
     position:relative;
 }
+    .green-shape{
+    display:none;
+}
    
 
     /* ABOUT */
