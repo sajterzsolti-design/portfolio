@@ -922,11 +922,13 @@ header{
 }
 
     .green-shape{
-        width:300px;
-        height:150px;
-        left:50px;
-        bottom:35px;
-        transform:translateX (50%);
+    width:260px;
+    height:120px;
+
+    left:50%;
+    bottom:25px;
+
+    transform:translateX(-50%);
     }
 
     /* ABOUT */
