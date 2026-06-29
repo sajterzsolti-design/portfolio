@@ -918,16 +918,7 @@ header{
     height:auto;
     position:relative;
 }
-    .green-shape{
-    width:330px;
-    height:150px;
-
-    left:50%;
-    bottom:35px;
-
-    transform:translateX(-50%);
-
-}
+   
 
     /* ABOUT */
 
