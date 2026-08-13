@@ -1912,3 +1912,79 @@ header{
     }
 
 }
+/* =================================
+   PRACTICE — COMING SOON
+================================= */
+
+.practice-coming-soon {
+    max-width: 1000px;
+    min-height: 70vh;
+    margin: 0 auto;
+    padding: 100px 50px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.practice-coming-soon h1 {
+    font-family: "Average", serif;
+    font-size: 76px;
+    font-weight: 400;
+    line-height: 1;
+    margin: 12px 0 28px;
+}
+
+.practice-coming-soon p:not(.case-label) {
+    max-width: 560px;
+    font-size: 18px;
+    line-height: 1.8;
+    color: #555;
+    margin: 0 0 40px;
+}
+
+.practice-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    width: fit-content;
+
+    color: #222;
+    text-decoration: none;
+    font-size: 15px;
+
+    transition: opacity 0.2s ease;
+}
+
+.practice-back-link span {
+    font-size: 20px;
+    transition: transform 0.2s ease;
+}
+
+.practice-back-link:hover {
+    opacity: 0.6;
+}
+
+.practice-back-link:hover span {
+    transform: translateX(5px);
+}
+
+
+@media (max-width: 600px) {
+
+    .practice-coming-soon {
+        min-height: 70vh;
+        padding: 70px 25px;
+    }
+
+    .practice-coming-soon h1 {
+        font-size: 52px;
+    }
+
+    .practice-coming-soon p:not(.case-label) {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+}
