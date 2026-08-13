@@ -212,6 +212,46 @@ header{
 
     margin:80px 0 120px;
 }
+.projects-heading{
+    max-width:720px;
+    margin:70px auto 70px;
+    text-align:center;
+}
+
+.projects-heading .section-label{
+    display:block;
+
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    letter-spacing:2px;
+
+    color:#7C977F;
+
+    margin-bottom:18px;
+}
+
+.projects-heading h2{
+    font-family:'Average', serif;
+    font-size:64px;
+    font-weight:400;
+
+    line-height:1;
+
+    margin:0 0 25px;
+}
+
+.projects-heading p{
+    max-width:620px;
+
+    margin:0 auto;
+
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+
+    line-height:1.8;
+
+    color:#555;
+}
 
 /* PROJECT CONTAINER */
 
@@ -913,15 +953,18 @@ header{
     height:auto;
 }
 
-    .hero-image img{
+.hero-image img{
     width:100%;
     height:auto;
     position:relative;
 }
+
     .green-shape{
-    display:none;
-}
-   
+        width:240px;
+        height:120px;
+        left:20px;
+        bottom:30px;
+    }
 
     /* ABOUT */
 
@@ -943,6 +986,22 @@ header{
     .projects{
         padding:0 20px 60px;
     }
+@media (max-width:700px){
+
+    .projects-heading{
+        margin-bottom:50px;
+        padding:0 20px;
+    }
+
+    .projects-heading h2{
+        font-size:48px;
+    }
+
+    .projects-heading p{
+        font-size:15px;
+    }
+
+}
 
     .projects h2{
         font-size:56px;
@@ -1009,4 +1068,847 @@ header{
         right:20px;
         bottom:20px;
     }
+}
+/* =========================================================
+   PRACTICE & EXPERIMENTS – INDEX PREVIEW
+========================================================= */
+
+
+.practice-preview{
+
+    width:100%;
+
+    max-width:1200px;
+
+    margin:0 auto;
+
+    padding:100px 80px 120px;
+
+}
+
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+
+.practice-preview-heading{
+
+    max-width:720px;
+
+    margin:70px auto 70px;
+
+    text-align:center;
+
+}
+
+
+.practice-label{
+
+    display:block;
+
+    font-family:'Inter', sans-serif;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+    color:#7C977F;
+
+    margin-bottom:20px;
+
+}
+
+
+.practice-preview-heading h2{
+
+    font-family:'Average', serif;
+
+    font-size:64px;
+
+    font-weight:400;
+
+    line-height:1;
+
+    margin:0 0 25px;
+
+}
+
+
+.practice-preview-heading p{
+
+    max-width:620px;
+
+    margin:0 auto;
+
+    font-family:'Inter', sans-serif;
+
+    font-size:16px;
+
+    line-height:1.8;
+
+    color:#555;
+
+}
+
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+
+.practice-preview-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3, 1fr);
+
+    gap:24px;
+
+}
+
+
+.practice-preview-card{
+
+    display:block;
+
+    overflow:hidden;
+
+    color:inherit;
+
+    text-decoration:none;
+
+    background:#fff;
+
+    border:1px solid rgba(124,151,127,.16);
+
+    border-radius:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.035);
+
+    transition:
+
+        transform .35s ease,
+
+        box-shadow .35s ease;
+
+}
+
+
+.practice-preview-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+
+}
+
+
+
+/* =========================================================
+   CARD IMAGE
+========================================================= */
+
+
+.practice-preview-image{
+
+    width:100%;
+
+    height:260px;
+
+    overflow:hidden;
+
+    background:#EEEEEA;
+
+}
+
+
+.practice-preview-image img{
+
+    width:100%;
+
+    height:100%;
+
+    display:block;
+
+    object-fit:cover;
+
+    transition:
+
+        transform .7s cubic-bezier(.19,1,.22,1);
+
+}
+
+
+.practice-preview-card:hover
+.practice-preview-image img{
+
+    transform:scale(1.035);
+
+}
+
+
+/* Pet Haven */
+
+.practice-preview-tall{
+
+    padding:12px 0;
+
+}
+
+
+.practice-preview-tall img{
+
+    object-fit:contain;
+
+}
+
+
+
+/* =========================================================
+   CARD TEXT
+========================================================= */
+
+
+.practice-preview-content{
+
+    padding:22px 24px 26px;
+
+}
+
+
+.practice-preview-content span{
+
+    display:block;
+
+    font-family:'Inter', sans-serif;
+
+    font-size:10px;
+
+    letter-spacing:1.3px;
+
+    text-transform:uppercase;
+
+    color:#7C977F;
+
+    margin-bottom:10px;
+
+}
+
+
+.practice-preview-content h3{
+
+    font-family:'Average', serif;
+
+    font-size:30px;
+
+    font-weight:400;
+
+    line-height:1.1;
+
+    margin:0;
+
+}
+
+
+
+/* =========================================================
+   EXPLORE LINK
+========================================================= */
+
+
+.practice-preview-more{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:50px;
+
+}
+
+
+.practice-preview-more a{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-family:'Inter', sans-serif;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    color:#7C977F;
+
+    text-decoration:none;
+
+    transition:.3s ease;
+
+}
+
+
+.practice-preview-more a span{
+
+    font-size:21px;
+
+    transition:.3s ease;
+
+}
+
+
+.practice-preview-more a:hover{
+
+    opacity:.75;
+
+}
+
+
+.practice-preview-more a:hover span{
+
+    transform:translateX(6px);
+
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+
+@media (max-width:1000px){
+
+    .practice-preview{
+
+        padding:80px 50px 100px;
+
+    }
+
+
+    .practice-preview-grid{
+
+        grid-template-columns:1fr;
+
+        max-width:650px;
+
+        margin:0 auto;
+
+        gap:28px;
+
+    }
+
+
+    .practice-preview-image{
+
+        height:350px;
+
+    }
+
+}
+
+
+
+@media (max-width:700px){
+
+    .practice-preview{
+
+        padding:70px 25px 90px;
+
+    }
+
+
+    .practice-preview-heading{
+
+        margin-bottom:45px;
+
+    }
+
+
+    .practice-preview-heading h2{
+
+        font-size:48px;
+
+    }
+
+
+    .practice-preview-heading p{
+
+        font-size:15px;
+
+    }
+
+
+    .practice-preview-grid{
+
+        gap:20px;
+
+    }
+
+
+    .practice-preview-image{
+
+        height:260px;
+
+    }
+
+
+    .practice-preview-content{
+
+        padding:20px 22px 24px;
+
+    }
+
+
+    .practice-preview-content h3{
+
+        font-size:28px;
+
+    }
+
+}
+/* =========================================
+   PRACTICE PROJECT
+========================================= */
+
+.practice-case-hero {
+    min-height: auto;
+}
+
+.practice-full-image {
+    width: 100%;
+    max-width: 1200px;
+    margin: 60px auto 100px;
+    padding: 0 40px;
+}
+
+.practice-full-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.practice-next-projects {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 50px 40px 0;
+    border-top: 1px solid #d8d8d8;
+}
+
+.practice-next-links {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin-top: 25px;
+}
+
+.practice-next-links a {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid #d8d8d8;
+    text-decoration: none;
+    color: inherit;
+    font-size: 17px;
+}
+
+.practice-next-links a:hover {
+    padding-left: 8px;
+}
+
+.practice-next-links span {
+    font-size: 20px;
+}
+
+@media (max-width: 700px) {
+
+    .practice-full-image {
+        padding: 0 22px;
+        margin-bottom: 70px;
+    }
+
+    .practice-next-projects {
+        padding: 40px 22px 0;
+        margin-top: 70px;
+    }
+
+}
+/* =================================
+   PRACTICE CASE STUDY
+================================= */
+
+.practice-case-hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 70px 50px 60px;
+}
+
+.practice-case-intro {
+    max-width: 720px;
+    margin-bottom: 55px;
+}
+
+.practice-case-intro h1 {
+    font-family: "Average", serif;
+    font-size: 72px;
+    font-weight: 400;
+    margin: 10px 0 20px;
+    line-height: 1;
+}
+
+.practice-case-intro .case-subtitle {
+    max-width: 620px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #555;
+}
+
+.practice-case-image {
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.practice-case-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* PROJECT IMAGE */
+
+.practice-case-gallery {
+    max-width: 1100px;
+    margin: 20px auto 70px;
+    padding: 0 40px;
+}
+
+.practice-case-gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* BACK TO PRACTICE */
+
+.practice-case-back {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 50px 90px;
+}
+
+.practice-case-back a {
+    color: #222;
+    text-decoration: none;
+    font-size: 14px;
+    transition: opacity 0.2s ease;
+}
+
+.practice-case-back a:hover {
+    opacity: 0.55;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .practice-case-hero {
+        padding: 50px 25px 40px;
+    }
+
+    .practice-case-intro h1 {
+        font-size: 52px;
+    }
+
+    .practice-case-intro .case-subtitle {
+        font-size: 16px;
+    }
+
+    .practice-case-gallery {
+        padding: 0 25px;
+        margin-bottom: 50px;
+    }
+
+    .practice-case-back {
+        padding: 10px 25px 60px;
+    }
+
+}
+/* ==========================
+   FINAL MOBILE POLISH
+========================== */
+
+@media (max-width: 600px){
+
+    /* HEADER */
+
+    header{
+        padding:20px 18px 0;
+    }
+
+    .navbar{
+        flex-direction:row;
+        align-items:center;
+    }
+
+    .logo{
+        font-size:1.3rem;
+    }
+
+    .nav-links{
+        gap:14px;
+    }
+
+    .nav-links a{
+        font-size:13px;
+    }
+
+
+    /* HERO */
+
+    .hero{
+        padding:0 20px;
+        margin:50px auto 80px;
+    }
+
+    .hero-content h1{
+        font-size:52px;
+    }
+
+    .hero-content p{
+        font-size:16px;
+        line-height:1.7;
+    }
+
+    .hero-image{
+        max-width:280px;
+    }
+
+
+    /* ABOUT */
+
+    .about{
+        padding:0 20px;
+        margin-bottom:80px;
+    }
+
+    .about h2{
+        font-size:50px;
+        margin:50px 0 30px;
+    }
+
+    .about-card{
+        padding:28px 24px;
+        border-radius:18px;
+    }
+
+    .about-card p{
+        font-size:15px;
+        line-height:1.8;
+    }
+
+
+    /* PROJECTS */
+
+    .projects{
+        padding:0 20px 70px;
+    }
+
+    .projects-heading{
+        margin:55px auto 50px;
+        padding:0;
+    }
+
+    .projects-heading h2{
+        font-size:50px;
+    }
+
+    .projects-heading p{
+        font-size:15px;
+        line-height:1.7;
+    }
+
+    .project-row{
+        margin-bottom:55px;
+    }
+
+    .project-overlay{
+        padding:24px;
+    }
+
+    .project-overlay h3{
+        font-size:27px;
+    }
+
+    .project-overlay p{
+        font-size:14px;
+        line-height:1.7;
+    }
+
+
+    /* PRACTICE */
+
+    .practice-preview{
+        padding:60px 20px 80px;
+    }
+
+    .practice-preview-heading{
+        margin:50px auto 40px;
+    }
+
+    .practice-preview-heading h2{
+        font-size:46px;
+        line-height:1.05;
+    }
+
+    .practice-preview-heading p{
+        font-size:15px;
+        line-height:1.7;
+    }
+
+    .practice-preview-grid{
+        gap:22px;
+    }
+
+    .practice-preview-image{
+        height:240px;
+    }
+
+    .practice-preview-content{
+        padding:20px;
+    }
+
+    .practice-preview-content h3{
+        font-size:27px;
+    }
+
+
+    /* CONTACT */
+
+    .contact{
+        padding:0 20px;
+        margin-bottom:80px;
+    }
+
+    .contact h2{
+        font-size:50px;
+        margin:60px 0 40px;
+    }
+
+    .contact-text{
+        font-size:16px;
+    }
+
+
+    /* BACK TO TOP */
+
+    #backToTop{
+        width:46px;
+        height:46px;
+        right:18px;
+        bottom:18px;
+        font-size:22px;
+    }
+
+
+    /* CASE STUDIES */
+
+    .case-nav{
+        padding:0 20px;
+        margin:25px auto;
+    }
+
+    .case-hero{
+        padding:0 20px;
+        margin:70px auto 80px;
+    }
+
+    .case-hero h1{
+        font-size:56px;
+    }
+
+    .case-subtitle{
+        font-size:16px;
+        line-height:1.7;
+    }
+
+    .hero-mockup img{
+        max-width:100%;
+    }
+
+    .project-summary{
+        margin:0 20px 80px;
+        padding:28px 22px;
+        grid-template-columns:1fr 1fr;
+        gap:28px 20px;
+        border-radius:18px;
+    }
+
+    .project-summary span{
+        font-size:12px;
+    }
+
+    .project-summary h3{
+        font-size:17px;
+    }
+
+    .section-divider{
+        margin:70px 20px;
+        width:calc(100% - 40px);
+    }
+
+    .case-section{
+        padding:0 20px;
+        gap:20px;
+    }
+
+    .case-section h2{
+        font-size:40px;
+    }
+
+    .case-content p{
+        font-size:16px;
+        line-height:1.8;
+    }
+
+    .persona-image,
+    .wireframe-image,
+    .final-image{
+        padding:0 20px;
+        margin:50px auto 80px;
+    }
+
+
+    /* PRACTICE CASE PAGES */
+
+    .practice-case-hero{
+        padding:45px 20px 35px;
+    }
+
+    .practice-case-intro h1{
+        font-size:50px;
+        line-height:1.05;
+    }
+
+    .practice-case-intro .case-subtitle{
+        font-size:16px;
+    }
+
+    .practice-case-gallery{
+        padding:0 20px;
+        margin-bottom:60px;
+    }
+
+    .practice-case-back{
+        padding:10px 20px 60px;
+    }
+
 }
