@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Project | Zsolti Sajter</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="case-nav">
+
+    <a href="index.html">
+        ← Back to Portfolio
+    </a>
+
+</nav>
+
+
+<main id="project-container">
+
+    <p>Loading project...</p>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://emuudatwzvzwfvxyoeed.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
+
+
+async function loadProject() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const projectId =
+        params.get("id");
+
+
+    if (!projectId) {
+
+        document.getElementById(
+            "project-container"
+        ).innerHTML =
+            "<p>Project not found.</p>";
+
+        return;
+    }
+
+
+    const response =
+        await fetch(
+            `${SUPABASE_URL}/rest/v1/projects?id=eq.${projectId}&select=*`,
+            {
+                headers: {
+                    "apikey": SUPABASE_KEY
+                }
+            }
+        );
+
+
+    if (!response.ok) {
+
+        document.getElementById(
+            "project-container"
+        ).innerHTML =
+            "<p>Failed to load project.</p>";
+
+        return;
+    }
+
+
+    const projects =
+        await response.json();
+
+
+    if (!projects.length) {
+
+        document.getElementById(
+            "project-container"
+        ).innerHTML =
+            "<p>Project not found.</p>";
+
+        return;
+    }
+
+
+    const project =
+        projects[0];
+
+
+    document.getElementById(
+        "project-container"
+    ).innerHTML = `
+
+        <section class="case-hero">
+
+            <div class="hero-left">
+
+                <p class="case-label">
+                    ${project.category || "PROJECT"}
+                </p>
+
+                <h1>
+                    ${project.title || ""}
+                </h1>
+
+                <p class="case-subtitle">
+                    ${project.case_subtitle || project.description || ""}
+                </p>
+
+            </div>
+
+
+            <div class="hero-mockup">
+
+                ${
+                    project.image_url
+                    ? `
+                        <img
+                            src="${project.image_url}"
+                            alt="${project.title || ""}"
+                        >
+                    `
+                    : ""
+                }
+
+            </div>
+
+        </section>
+
+
+        <section class="project-summary">
+
+            <div>
+
+                <span>Type</span>
+
+                <h3>
+                    ${project.case_type || "—"}
+                </h3>
+
+            </div>
+
+
+            <div>
+
+                <span>Focus</span>
+
+                <h3>
+                    ${project.case_focus || "—"}
+                </h3>
+
+            </div>
+
+
+            <div>
+
+                <span>Tools</span>
+
+                <h3>
+                    ${project.case_tools || "—"}
+                </h3>
+
+            </div>
+
+
+            <div>
+
+                <span>Project</span>
+
+                <h3>
+                    ${project.featured
+                        ? "Featured"
+                        : "Portfolio Project"}
+                </h3>
+
+            </div>
+
+        </section>
+
+
+        <div class="section-divider"></div>
+
+
+        <section class="case-section">
+
+            <h2>
+                About the project
+            </h2>
+
+            <div class="case-content">
+
+                <p>
+                    ${project.description || ""}
+                </p>
+
+            </div>
+
+        </section>
+
+    `;
+
+}
+
+
+loadProject();
+
+</script>
+
+
+</body>
+
+</html>
