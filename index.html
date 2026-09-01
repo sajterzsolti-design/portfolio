@@ -440,7 +440,7 @@ async function loadProjects() {
 
             const link = document.createElement("a");
 
-            link.href = project.project_url;
+            link.href = `project.html?id=${project.id}`;;
             link.className = "project-link";
 
             const row = document.createElement("div");
