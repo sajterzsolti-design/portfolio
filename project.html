@@ -88,6 +88,14 @@ async function loadProject() {
     const projectId =
         params.get("id");
 
+    const projectType =
+        params.get("type");
+
+    const table =
+        projectType === "practice"
+            ? "practice_projects"
+            : "projects";
+
 
     if (!projectId) {
 
@@ -102,7 +110,7 @@ async function loadProject() {
 
         const response =
             await fetch(
-                `${SUPABASE_URL}/rest/v1/projects?id=eq.${encodeURIComponent(projectId)}&select=*`,
+                `${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(projectId)}&select=*`,
                 {
                     method: "GET",
                     headers: {
