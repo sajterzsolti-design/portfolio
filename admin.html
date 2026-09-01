@@ -1415,6 +1415,33 @@
                             );
                         }
 
+                        if (currentTable === "practice_projects" && !projectUrl) {
+                            const created = await response.json();
+                            const createdId = created?.[0]?.id;
+
+                            if (createdId) {
+                                const urlResponse = await fetch(
+                                    `${SUPABASE_URL}/rest/v1/practice_projects?id=eq.${createdId}`,
+                                    {
+                                        method: "PATCH",
+                                        headers: {
+                                            ...getHeaders(),
+                                            "Prefer": "return=minimal"
+                                        },
+                                        body: JSON.stringify({
+                                            project_url: `project.html?id=${createdId}&type=practice`
+                                        })
+                                    }
+                                );
+
+                                if (!urlResponse.ok) {
+                                    throw new Error(
+                                        `Failed to set practice project URL: ${await getErrorMessage(urlResponse)}`
+                                    );
+                                }
+                            }
+                        }
+
                     }
 
 
