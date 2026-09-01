@@ -12,35 +12,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-
-    <style>
-        .site-footer {
-            max-width: 1200px;
-            margin: 120px auto 40px;
-            padding: 0 80px;
-            text-align: center;
-            font-family: 'Inter', sans-serif;
-        }
-        .footer-divider {
-            width: 100%;
-            height: 1px;
-            background: #D9D9D9;
-            margin-bottom: 28px;
-        }
-        .site-footer p {
-            margin: 0;
-            color: #777;
-            font-size: 13px;
-            letter-spacing: .2px;
-        }
-        @media (max-width: 600px) {
-            .site-footer {
-                margin: 80px auto 30px;
-                padding: 0 20px;
-            }
-        }
-    </style>
-
 </head>
 
 <body>
@@ -261,50 +232,6 @@
         </div>
 
     </section>
-
-
-    <footer class="site-footer">
-        <div class="footer-divider"></div>
-        <p>Designed &amp; developed by Zsolti Sajter · 2026</p>
-    </footer>
-
-
-    <script>
-        /* CMS SYNC: content fields are read from Supabase when available.
-           Static page content remains the fallback so the original layout is preserved. */
-        const CMS_URL = "https://emuudatwzvzwfvxyoeed.supabase.co";
-        const CMS_KEY = "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
-        const CMS_SLUG = "arteum-mobile";
-        const CMS_TABLE = "projects";
-
-        async function syncCmsBasics() {
-            try {
-                const response = await fetch(
-                    `${CMS_URL}/rest/v1/${CMS_TABLE}?slug=eq.${encodeURIComponent(CMS_SLUG)}&select=title,case_subtitle,case_image_url,image_url`
-                );
-                if (!response.ok) return;
-                const rows = await response.json();
-                const project = rows[0];
-                if (!project) return;
-
-                const titleEl = document.querySelector(".hero-left h1");
-                if (titleEl && project.title) titleEl.textContent = project.title;
-
-                const subtitleEl = document.querySelector(".hero-left .case-subtitle");
-                if (subtitleEl && project.case_subtitle) subtitleEl.textContent = project.case_subtitle;
-
-                const heroImg = document.querySelector(".hero-mockup img");
-                if (heroImg && (project.case_image_url || project.image_url)) {
-                    heroImg.src = project.case_image_url || project.image_url;
-                }
-
-                document.title = `${project.title || titleEl?.textContent || ""} | Case Study`;
-            } catch (error) {
-                console.warn("CMS sync unavailable; using static page content.", error);
-            }
-        }
-        syncCmsBasics();
-    </script>
 
 </body>
 
