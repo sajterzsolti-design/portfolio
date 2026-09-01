@@ -106,8 +106,7 @@ async function loadProject() {
                 {
                     method: "GET",
                     headers: {
-                        "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`
+                        "apikey": SUPABASE_KEY
                     }
                 }
             );
@@ -154,12 +153,12 @@ async function loadProject() {
         /* HERO */
 
         const heroImage =
-            project.image_url
+            (project.case_image_url || project.image_url)
                 ? `
                     <div class="hero-mockup">
 
                         <img
-                            src="${escapeHtml(project.image_url)}"
+                            src="${escapeHtml(project.case_image_url || project.image_url)}"
                             alt="${escapeHtml(project.title || "Project")}"
                         >
 
