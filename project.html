@@ -43,8 +43,10 @@
 
 <script>
 
+
 const SUPABASE_URL =
     "https://emuudatwzvzwfvxyoeed.supabase.co";
+
 
 const SUPABASE_KEY =
     "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
@@ -52,10 +54,12 @@ const SUPABASE_KEY =
 
 async function loadProject() {
 
+
     const params =
         new URLSearchParams(
             window.location.search
         );
+
 
     const projectId =
         params.get("id");
@@ -69,74 +73,99 @@ async function loadProject() {
             "<p>Project not found.</p>";
 
         return;
+
     }
 
 
-    const response =
-        await fetch(
-            `${SUPABASE_URL}/rest/v1/projects?id=eq.${projectId}&select=*`,
-            {
-                headers: {
-                    "apikey": SUPABASE_KEY
+    try {
+
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/projects?id=eq.${projectId}&select=*`,
+                {
+                    headers: {
+                        "apikey": SUPABASE_KEY
+                    }
                 }
-            }
-        );
+            );
 
 
-    if (!response.ok) {
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load project."
+            );
+
+        }
+
+
+        const projects =
+            await response.json();
+
+
+        if (!projects.length) {
+
+            document.getElementById(
+                "project-container"
+            ).innerHTML =
+                "<p>Project not found.</p>";
+
+            return;
+
+        }
+
+
+        const project =
+            projects[0];
+
 
         document.getElementById(
             "project-container"
-        ).innerHTML =
-            "<p>Failed to load project.</p>";
-
-        return;
-    }
+        ).innerHTML = `
 
 
-    const projects =
-        await response.json();
+        <!-- ========================= -->
+        <!-- HERO -->
+        <!-- ========================= -->
 
-
-    if (!projects.length) {
-
-        document.getElementById(
-            "project-container"
-        ).innerHTML =
-            "<p>Project not found.</p>";
-
-        return;
-    }
-
-
-    const project =
-        projects[0];
-
-
-    document.getElementById(
-        "project-container"
-    ).innerHTML = `
 
         <section class="case-hero">
 
+
             <div class="hero-left">
 
+
                 <p class="case-label">
+
                     ${project.category || "PROJECT"}
+
                 </p>
+
 
                 <h1>
+
                     ${project.title || ""}
+
                 </h1>
 
+
                 <p class="case-subtitle">
-                    ${project.case_subtitle || project.description || ""}
+
+                    ${
+                        project.case_subtitle ||
+                        project.description ||
+                        ""
+                    }
+
                 </p>
+
 
             </div>
 
 
             <div class="hero-mockup">
+
 
                 ${
                     project.image_url
@@ -149,19 +178,30 @@ async function loadProject() {
                     : ""
                 }
 
+
             </div>
+
 
         </section>
 
 
+
+        <!-- ========================= -->
+        <!-- PROJECT SUMMARY -->
+        <!-- ========================= -->
+
+
         <section class="project-summary">
+
 
             <div>
 
                 <span>Type</span>
 
                 <h3>
+
                     ${project.case_type || "—"}
+
                 </h3>
 
             </div>
@@ -172,7 +212,9 @@ async function loadProject() {
                 <span>Focus</span>
 
                 <h3>
+
                     ${project.case_focus || "—"}
+
                 </h3>
 
             </div>
@@ -183,7 +225,9 @@ async function loadProject() {
                 <span>Tools</span>
 
                 <h3>
+
                     ${project.case_tools || "—"}
+
                 </h3>
 
             </div>
@@ -194,41 +238,157 @@ async function loadProject() {
                 <span>Project</span>
 
                 <h3>
-                    ${project.featured
-                        ? "Featured"
-                        : "Portfolio Project"}
+
+                    ${project.case_project || "—"}
+
                 </h3>
 
             </div>
 
+
         </section>
+
 
 
         <div class="section-divider"></div>
 
 
+
+        <!-- ========================= -->
+        <!-- ABOUT -->
+        <!-- ========================= -->
+
+
         <section class="case-section">
 
+
             <h2>
+
                 About the project
+
             </h2>
+
 
             <div class="case-content">
 
+
                 <p>
-                    ${project.description || ""}
+
+                    ${
+                        project.case_about ||
+                        project.description ||
+                        ""
+                    }
+
                 </p>
+
 
             </div>
 
+
         </section>
 
-    `;
+
+
+        <!-- ========================= -->
+        <!-- DESIGN DIRECTION -->
+        <!-- ========================= -->
+
+
+        ${
+            project.case_direction
+            ? `
+
+                <section class="case-section">
+
+                    <h2>
+
+                        Design direction
+
+                    </h2>
+
+
+                    <div class="case-content">
+
+                        <p>
+
+                            ${project.case_direction}
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+            `
+            : ""
+        }
+
+
+
+        <!-- ========================= -->
+        <!-- TAKEAWAY -->
+        <!-- ========================= -->
+
+
+        ${
+            project.case_takeaway
+            ? `
+
+                <section class="case-section">
+
+                    <h2>
+
+                        Takeaway
+
+                    </h2>
+
+
+                    <div class="case-content">
+
+                        <p>
+
+                            ${project.case_takeaway}
+
+                        </p>
+
+                    </div>
+
+                </section>
+
+            `
+            : ""
+        }
+
+
+        `;
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+            "Project loading error:",
+            error
+        );
+
+
+        document.getElementById(
+            "project-container"
+        ).innerHTML =
+
+            "<p>Failed to load project.</p>";
+
+    }
 
 }
 
 
 loadProject();
+
 
 </script>
 
