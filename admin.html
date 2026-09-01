@@ -1213,6 +1213,45 @@
                 .getElementById("project-description")
                 .value =
                     project.description || "";
+            document
+    .getElementById("project-case-subtitle")
+    .value =
+        project.case_subtitle || "";
+
+document
+    .getElementById("project-case-type")
+    .value =
+        project.case_type || "";
+
+document
+    .getElementById("project-case-focus")
+    .value =
+        project.case_focus || "";
+
+document
+    .getElementById("project-case-tools")
+    .value =
+        project.case_tools || "";
+
+document
+    .getElementById("project-case-project")
+    .value =
+        project.case_project || "";
+
+document
+    .getElementById("project-case-about")
+    .value =
+        project.case_about || "";
+
+document
+    .getElementById("project-case-direction")
+    .value =
+        project.case_direction || "";
+
+document
+    .getElementById("project-case-takeaway")
+    .value =
+        project.case_takeaway || "";
 
 
             document
@@ -1483,31 +1522,55 @@
 
                         const projectData = {
 
-                            title:
-                                title,
+    title:
+        title,
 
-                            slug:
-                                slug,
+    slug:
+        slug,
 
-                            category:
-                                category,
+    category:
+        category,
 
-                            description:
-                                description,
+    description:
+        description,
 
-                            image_url:
-                                imageUrl,
+    image_url:
+        imageUrl,
 
-                            project_url:
-                                projectUrl || null,
+    project_url:
+        projectUrl || null,
 
-                            featured:
-                                featured,
+    featured:
+        featured,
 
-                            sort_order:
-                                sortOrder
+    sort_order:
+        sortOrder,
 
-                        };
+    case_subtitle:
+        document.getElementById("project-case-subtitle").value.trim() || null,
+
+    case_type:
+        document.getElementById("project-case-type").value.trim() || null,
+
+    case_focus:
+        document.getElementById("project-case-focus").value.trim() || null,
+
+    case_tools:
+        document.getElementById("project-case-tools").value.trim() || null,
+
+    case_project:
+        document.getElementById("project-case-project").value.trim() || null,
+
+    case_about:
+        document.getElementById("project-case-about").value.trim() || null,
+
+    case_direction:
+        document.getElementById("project-case-direction").value.trim() || null,
+
+    case_takeaway:
+        document.getElementById("project-case-takeaway").value.trim() || null
+
+};
 
 
 
