@@ -4,13 +4,9 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Project | Zsolti Sajter</title>
+    <title>Project | Case Study</title>
 
     <link rel="stylesheet" href="style.css">
 
@@ -20,7 +16,6 @@
     >
 
 </head>
-
 
 <body>
 
@@ -45,7 +40,6 @@
 
 <script>
 
-
 const SUPABASE_URL =
     "https://emuudatwzvzwfvxyoeed.supabase.co";
 
@@ -65,7 +59,7 @@ function escapeHtml(value) {
 }
 
 
-function renderText(value) {
+function formatParagraphs(value) {
 
     if (!value) {
         return "";
@@ -73,7 +67,11 @@ function renderText(value) {
 
     return String(value)
         .split(/\n\s*\n/)
-        .map(text => `<p>${escapeHtml(text.trim())}</p>`)
+        .map(paragraph => `
+            <p>
+                ${escapeHtml(paragraph.trim())}
+            </p>
+        `)
         .join("");
 
 }
@@ -83,7 +81,6 @@ async function loadProject() {
 
     const container =
         document.getElementById("project-container");
-
 
     const params =
         new URLSearchParams(window.location.search);
@@ -98,7 +95,6 @@ async function loadProject() {
             "<p>Project not found.</p>";
 
         return;
-
     }
 
 
@@ -108,10 +104,10 @@ async function loadProject() {
             await fetch(
                 `${SUPABASE_URL}/rest/v1/projects?id=eq.${encodeURIComponent(projectId)}&select=*`,
                 {
+                    method: "GET",
                     headers: {
                         "apikey": SUPABASE_KEY,
-                        "Authorization":
-                            `Bearer ${SUPABASE_KEY}`
+                        "Authorization": `Bearer ${SUPABASE_KEY}`
                     }
                 }
             );
@@ -122,13 +118,15 @@ async function loadProject() {
             const error =
                 await response.text();
 
-            console.error(error);
+            console.error(
+                "Supabase error:",
+                error
+            );
 
             container.innerHTML =
                 "<p>Failed to load project.</p>";
 
             return;
-
         }
 
 
@@ -142,7 +140,6 @@ async function loadProject() {
                 "<p>Project not found.</p>";
 
             return;
-
         }
 
 
@@ -151,8 +148,10 @@ async function loadProject() {
 
 
         document.title =
-            `${project.title || "Project"} | Zsolti Sajter`;
+            `${project.title || "Project"} | Case Study`;
 
+
+        /* HERO */
 
         const heroImage =
             project.image_url
@@ -161,7 +160,7 @@ async function loadProject() {
 
                         <img
                             src="${escapeHtml(project.image_url)}"
-                            alt="${escapeHtml(project.title || "")}"
+                            alt="${escapeHtml(project.title || "Project")}"
                         >
 
                     </div>
@@ -169,163 +168,187 @@ async function loadProject() {
                 : "";
 
 
-        const caseImage =
-            project.case_image_url
-                ? `
-                    <section class="practice-full-image">
+        /* SUMMARY */
 
-                        <img
-                            src="${escapeHtml(project.case_image_url)}"
-                            alt="${escapeHtml(project.title || "")}"
-                        >
-
-                    </section>
-                `
-                : "";
-
-
-        let summary = "";
-
+        const summaryItems = [];
 
         if (project.case_type) {
 
-            summary += `
+            summaryItems.push(`
                 <div>
-                    <span>Type</span>
+                    <span>Role</span>
                     <h3>${escapeHtml(project.case_type)}</h3>
                 </div>
-            `;
+            `);
 
         }
 
-
         if (project.case_focus) {
 
-            summary += `
+            summaryItems.push(`
                 <div>
                     <span>Focus</span>
                     <h3>${escapeHtml(project.case_focus)}</h3>
                 </div>
-            `;
+            `);
 
         }
 
-
         if (project.case_tools) {
 
-            summary += `
+            summaryItems.push(`
                 <div>
                     <span>Tools</span>
                     <h3>${escapeHtml(project.case_tools)}</h3>
                 </div>
-            `;
+            `);
 
         }
 
-
         if (project.case_project) {
 
-            summary += `
+            summaryItems.push(`
                 <div>
                     <span>Project</span>
                     <h3>${escapeHtml(project.case_project)}</h3>
                 </div>
-            `;
+            `);
 
         }
 
 
-        let sections = "";
+        /* ABOUT / OVERVIEW */
 
-
-        if (project.case_about) {
-
-            sections += `
-
-                <section class="case-section">
-
-                    <h2>
-                        About the project
-                    </h2>
-
-                    <div class="case-content">
-
-                        ${renderText(project.case_about)}
-
-                    </div>
-
-                </section>
-
-            `;
-
-        }
-
-
-        if (project.case_direction) {
-
-            sections += `
-
-                <section class="case-section">
-
-                    <h2>
-                        Design direction
-                    </h2>
-
-                    <div class="case-content">
-
-                        ${renderText(project.case_direction)}
-
-                    </div>
-
-                </section>
-
-            `;
-
-        }
-
-
-        if (project.case_takeaway) {
-
-            sections += `
-
-                <section class="case-section">
-
-                    <h2>
-                        Takeaway
-                    </h2>
-
-                    <div class="case-content">
-
-                        ${renderText(project.case_takeaway)}
-
-                    </div>
-
-                </section>
-
-            `;
-
-        }
-
-
-        const projectLink =
-            project.project_url
+        const aboutSection =
+            project.case_about
                 ? `
-                    <section class="case-section project-external-link">
 
-                        <a
-                            href="${escapeHtml(project.project_url)}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            View project →
-                        </a>
+                    <div class="section-divider"></div>
+
+                    <section class="case-section">
+
+                        <h2>
+                            Overview
+                        </h2>
+
+                        <div class="case-content">
+
+                            ${formatParagraphs(project.case_about)}
+
+                        </div>
 
                     </section>
+
                 `
                 : "";
 
 
+        /* DESIGN DIRECTION */
+
+        const directionSection =
+            project.case_direction
+                ? `
+
+                    <div class="section-divider"></div>
+
+                    <section class="case-section">
+
+                        <h2>
+                            Design Direction
+                        </h2>
+
+                        <div class="case-content">
+
+                            ${formatParagraphs(project.case_direction)}
+
+                        </div>
+
+                    </section>
+
+                `
+                : "";
+
+
+        /* CASE STUDY IMAGE */
+
+        const caseImageSection =
+            project.case_image_url
+                ? `
+
+                    <section class="final-image">
+
+                        <img
+                            src="${escapeHtml(project.case_image_url)}"
+                            alt="${escapeHtml(project.title || "Project")}"
+                        >
+
+                    </section>
+
+                `
+                : "";
+
+
+        /* TAKEAWAYS */
+
+        const takeawaySection =
+            project.case_takeaway
+                ? `
+
+                    <div class="section-divider"></div>
+
+                    <section class="case-section">
+
+                        <h2>
+                            Takeaways
+                        </h2>
+
+                        <div class="case-content">
+
+                            ${formatParagraphs(project.case_takeaway)}
+
+                        </div>
+
+                    </section>
+
+                `
+                : "";
+
+
+        /* EXTERNAL PROJECT */
+
+        const projectLink =
+            project.project_url
+                ? `
+
+                    <div class="section-divider"></div>
+
+                    <section class="case-section">
+
+                        <div class="case-content">
+
+                            <p>
+                                <a
+                                    href="${escapeHtml(project.project_url)}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    View project →
+                                </a>
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                `
+                : "";
+
+
+        /* RENDER */
+
         container.innerHTML = `
+
+            <!-- HERO -->
 
             <section class="case-hero">
 
@@ -333,15 +356,14 @@ async function loadProject() {
 
                     <p class="case-label">
                         ${escapeHtml(
-                            project.category || "SELECTED WORK"
+                            project.category ||
+                            "UX/UI CASE STUDY"
                         )}
                     </p>
-
 
                     <h1>
                         ${escapeHtml(project.title || "")}
                     </h1>
-
 
                     ${
                         project.case_subtitle
@@ -355,18 +377,19 @@ async function loadProject() {
 
                 </div>
 
-
                 ${heroImage}
 
             </section>
 
 
+            <!-- PROJECT SUMMARY -->
+
             ${
-                summary
+                summaryItems.length
                     ? `
                         <section class="project-summary">
 
-                            ${summary}
+                            ${summaryItems.join("")}
 
                         </section>
                     `
@@ -374,17 +397,16 @@ async function loadProject() {
             }
 
 
-            ${
-                summary
-                    ? `<div class="section-divider"></div>`
-                    : ""
-            }
+            ${aboutSection}
 
 
-            ${sections}
+            ${directionSection}
 
 
-            ${caseImage}
+            ${caseImageSection}
+
+
+            ${takeawaySection}
 
 
             ${projectLink}
@@ -401,7 +423,7 @@ async function loadProject() {
         );
 
         container.innerHTML =
-            "<p>Something went wrong while loading the project.</p>";
+            "<p>Failed to load project.</p>";
 
     }
 
