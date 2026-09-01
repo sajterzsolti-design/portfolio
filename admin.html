@@ -110,12 +110,15 @@
 
                 if (!response.ok) {
 
-    const error = await response.json();
+    const errorData = await response.json();
 
-    console.error("Supabase login error:", error);
+    console.error("Supabase login error:", errorData);
 
     message.textContent =
-        error.message || "Login failed.";
+        errorData.error_description ||
+        errorData.msg ||
+        errorData.message ||
+        "Login failed.";
 
     return;
 }
