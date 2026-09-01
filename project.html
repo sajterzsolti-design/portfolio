@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Project | Zsolti Sajter</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- BACK -->
+
+<nav class="case-nav">
+
+    <a href="index.html">
+        ← Back to Portfolio
+    </a>
+
+</nav>
+
+
+<main id="project-container">
+
+    <p>Loading project...</p>
+
+</main>
+
+
+<script>
+
+
+const SUPABASE_URL =
+    "https://emuudatwzvzwfvxyoeed.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
+
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function renderText(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    return String(value)
+        .split(/\n\s*\n/)
+        .map(text => `<p>${escapeHtml(text.trim())}</p>`)
+        .join("");
+
+}
+
+
+async function loadProject() {
+
+    const container =
+        document.getElementById("project-container");
+
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const projectId =
+        params.get("id");
+
+
+    if (!projectId) {
+
+        container.innerHTML =
+            "<p>Project not found.</p>";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/projects?id=eq.${encodeURIComponent(projectId)}&select=*`,
+                {
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization":
+                            `Bearer ${SUPABASE_KEY}`
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            const error =
+                await response.text();
+
+            console.error(error);
+
+            container.innerHTML =
+                "<p>Failed to load project.</p>";
+
+            return;
+
+        }
+
+
+        const projects =
+            await response.json();
+
+
+        if (!projects.length) {
+
+            container.innerHTML =
+                "<p>Project not found.</p>";
+
+            return;
+
+        }
+
+
+        const project =
+            projects[0];
+
+
+        document.title =
+            `${project.title || "Project"} | Zsolti Sajter`;
+
+
+        const heroImage =
+            project.image_url
+                ? `
+                    <div class="hero-mockup">
+
+                        <img
+                            src="${escapeHtml(project.image_url)}"
+                            alt="${escapeHtml(project.title || "")}"
+                        >
+
+                    </div>
+                `
+                : "";
+
+
+        const caseImage =
+            project.case_image_url
+                ? `
+                    <section class="practice-full-image">
+
+                        <img
+                            src="${escapeHtml(project.case_image_url)}"
+                            alt="${escapeHtml(project.title || "")}"
+                        >
+
+                    </section>
+                `
+                : "";
+
+
+        let summary = "";
+
+
+        if (project.case_type) {
+
+            summary += `
+                <div>
+                    <span>Type</span>
+                    <h3>${escapeHtml(project.case_type)}</h3>
+                </div>
+            `;
+
+        }
+
+
+        if (project.case_focus) {
+
+            summary += `
+                <div>
+                    <span>Focus</span>
+                    <h3>${escapeHtml(project.case_focus)}</h3>
+                </div>
+            `;
+
+        }
+
+
+        if (project.case_tools) {
+
+            summary += `
+                <div>
+                    <span>Tools</span>
+                    <h3>${escapeHtml(project.case_tools)}</h3>
+                </div>
+            `;
+
+        }
+
+
+        if (project.case_project) {
+
+            summary += `
+                <div>
+                    <span>Project</span>
+                    <h3>${escapeHtml(project.case_project)}</h3>
+                </div>
+            `;
+
+        }
+
+
+        let sections = "";
+
+
+        if (project.case_about) {
+
+            sections += `
+
+                <section class="case-section">
+
+                    <h2>
+                        About the project
+                    </h2>
+
+                    <div class="case-content">
+
+                        ${renderText(project.case_about)}
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }
+
+
+        if (project.case_direction) {
+
+            sections += `
+
+                <section class="case-section">
+
+                    <h2>
+                        Design direction
+                    </h2>
+
+                    <div class="case-content">
+
+                        ${renderText(project.case_direction)}
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }
+
+
+        if (project.case_takeaway) {
+
+            sections += `
+
+                <section class="case-section">
+
+                    <h2>
+                        Takeaway
+                    </h2>
+
+                    <div class="case-content">
+
+                        ${renderText(project.case_takeaway)}
+
+                    </div>
+
+                </section>
+
+            `;
+
+        }
+
+
+        const projectLink =
+            project.project_url
+                ? `
+                    <section class="case-section project-external-link">
+
+                        <a
+                            href="${escapeHtml(project.project_url)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View project →
+                        </a>
+
+                    </section>
+                `
+                : "";
+
+
+        container.innerHTML = `
+
+            <section class="case-hero">
+
+                <div class="hero-left">
+
+                    <p class="case-label">
+                        ${escapeHtml(
+                            project.category || "SELECTED WORK"
+                        )}
+                    </p>
+
+
+                    <h1>
+                        ${escapeHtml(project.title || "")}
+                    </h1>
+
+
+                    ${
+                        project.case_subtitle
+                            ? `
+                                <p class="case-subtitle">
+                                    ${escapeHtml(project.case_subtitle)}
+                                </p>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+
+                ${heroImage}
+
+            </section>
+
+
+            ${
+                summary
+                    ? `
+                        <section class="project-summary">
+
+                            ${summary}
+
+                        </section>
+                    `
+                    : ""
+            }
+
+
+            ${
+                summary
+                    ? `<div class="section-divider"></div>`
+                    : ""
+            }
+
+
+            ${sections}
+
+
+            ${caseImage}
+
+
+            ${projectLink}
+
+        `;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Project loading error:",
+            error
+        );
+
+        container.innerHTML =
+            "<p>Something went wrong while loading the project.</p>";
+
+    }
+
+}
+
+
+loadProject();
+
+</script>
+
+
+</body>
+
+</html>
