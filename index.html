@@ -240,117 +240,11 @@
 
     <!-- PRACTICE CARDS -->
 
-    <div class="practice-preview-grid">
-
-
-        <!-- ==========================
-             CRUMBS & TAILS
-        ========================== -->
-
-        <a
-            href="practice-crumbs.html"
-            class="practice-preview-card"
-        >
-
-            <div class="practice-preview-image">
-
-                <img
-                    src="images/crumbs-and-tails.png"
-                    alt="Crumbs & Tails brand identity and packaging"
-                >
-
-            </div>
-
-
-            <div class="practice-preview-content">
-
-                <span>
-                    Brand Identity &amp; Packaging
-                </span>
-
-
-                <h3>
-                    Crumbs &amp; Tails
-                </h3>
-
-            </div>
-
-        </a>
-
-
-
-        <!-- ==========================
-             PET HAVEN
-        ========================== -->
-
-        <a
-            href="pet-haven.html"
-            class="practice-preview-card"
-        >
-
-            <div class="practice-preview-image">
-
-                <img
-                    src="images/pet-haven.png"
-                    alt="Pet Haven animal adoption website"
-                >
-
-            </div>
-
-
-            <div class="practice-preview-content">
-
-                <span>
-                    Web Design / UI Practice
-                </span>
-
-
-                <h3>
-                    Pet Haven
-                </h3>
-
-            </div>
-
-        </a>
-
-
-
-        <!-- ==========================
-             TENEBRAE
-        ========================== -->
-
-        <a
-            href="tenebrae.html"
-            class="practice-preview-card"
-        >
-
-            <div class="practice-preview-image">
-
-                <img
-                    src="images/tenebrae.png"
-                    alt="Tenebrae fragrance packaging"
-                >
-
-            </div>
-
-
-            <div class="practice-preview-content">
-
-                <span>
-                    Brand Identity &amp; Packaging
-                </span>
-
-
-                <h3>
-                    Tenebrae
-                </h3>
-
-            </div>
-
-        </a>
-
-
-    </div>
+    <div
+    class="practice-preview-grid"
+    id="practice-projects-container"
+>
+</div>
 
 
 
@@ -625,7 +519,70 @@ function setupProjectAnimation() {
 }
 
 
+const practiceProjectsContainer =
+    document.getElementById("practice-projects-container");
+
+
+async function loadPracticeProjects() {
+
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/practice_projects?select=*&order=sort_order.asc`,
+        {
+            headers: {
+                apikey: SUPABASE_KEY
+            }
+        }
+    );
+
+    if (!response.ok) {
+        console.error(
+            "Failed to load practice projects:",
+            response.status
+        );
+        return;
+    }
+
+    const practiceProjects = await response.json();
+
+    console.log("Practice projects loaded:", practiceProjects);
+
+    practiceProjectsContainer.innerHTML = "";
+
+    practiceProjects.forEach(project => {
+
+        const card = document.createElement("a");
+
+        card.href = project.project_url;
+        card.className = "practice-preview-card";
+
+        card.innerHTML = `
+            <div class="practice-preview-image">
+                <img
+                    src="${project.image_url}"
+                    alt="${project.title}"
+                >
+            </div>
+
+            <div class="practice-preview-content">
+
+                <span>
+                    ${project.category}
+                </span>
+
+                <h3>
+                    ${project.title}
+                </h3>
+
+            </div>
+        `;
+
+        practiceProjectsContainer.appendChild(card);
+    });
+}
+
+
 loadProjects();
+loadPracticeProjects();
 
 </script>
 
