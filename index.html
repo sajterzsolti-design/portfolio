@@ -515,66 +515,83 @@ const projectsContainer =
 
 async function loadProjects() {
 
-    const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/projects?select=*&order=sort_order.asc`,
-        {
-            headers: {
-                apikey: SUPABASE_KEY,
-        
+    try {
+
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/projects?select=*&order=sort_order.asc`,
+            {
+                method: "GET",
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": `Bearer ${SUPABASE_KEY}`
+                }
             }
-        }
-    );
+        );
 
-    if (!response.ok) {
-        console.error("Failed to load projects:", response.status);
-        return;
+        console.log("Supabase response:", response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Supabase error:", errorText);
+            return;
+        }
+
+        const projects = await response.json();
+
+        console.log("Projects loaded:", projects);
+
+        projectsContainer.innerHTML = "";
+
+        projects.forEach((project, index) => {
+
+            const link = document.createElement("a");
+
+            link.href = project.project_url;
+            link.className = "project-link";
+
+            const row = document.createElement("div");
+
+            row.className = "project-row";
+
+            if (index % 2 === 1) {
+                row.classList.add("reverse");
+            }
+
+            row.innerHTML = `
+                <img
+                    src="${project.image_url}"
+                    alt="${project.title}"
+                >
+
+                <div class="project-overlay">
+
+                    <h3>
+                        ${project.title}
+                    </h3>
+
+                    <p>
+                        ${project.description}
+                    </p>
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+            `;
+
+            link.appendChild(row);
+            projectsContainer.appendChild(link);
+
+        });
+
+        setupProjectAnimation();
+
+    } catch (error) {
+
+        console.error("Failed to connect to Supabase:", error);
+
     }
-
-    const projects = await response.json();
-
-    projectsContainer.innerHTML = "";
-
-    projects.forEach((project, index) => {
-
-        const link = document.createElement("a");
-        link.href = project.project_url;
-        link.className = "project-link";
-
-        const row = document.createElement("div");
-        row.className = "project-row";
-
-        if (index % 2 === 1) {
-            row.classList.add("reverse");
-        }
-
-        row.innerHTML = `
-            <img
-                src="${project.image_url}"
-                alt="${project.title}"
-            >
-
-            <div class="project-overlay">
-
-                <h3>
-                    ${project.title}
-                </h3>
-
-                <p>
-                    ${project.description}
-                </p>
-
-                <span class="arrow">
-                    →
-                </span>
-
-            </div>
-        `;
-
-        link.appendChild(row);
-        projectsContainer.appendChild(link);
-    });
-
-    setupProjectAnimation();
 }
 
 
@@ -604,13 +621,13 @@ function setupProjectAnimation() {
     projects.forEach(project => {
         observer.observe(project);
     });
+
 }
 
 
 loadProjects();
 
 </script>
-
 
 </body>
 
