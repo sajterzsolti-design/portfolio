@@ -89,9 +89,9 @@ async function loadProject() {
         params.get("id");
 
     const projectType =
-        params.get("type");
+        params.get("type") || "project";
 
-    const table =
+    const tableName =
         projectType === "practice"
             ? "practice_projects"
             : "projects";
@@ -110,7 +110,7 @@ async function loadProject() {
 
         const response =
             await fetch(
-                `${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(projectId)}&select=*`,
+                `${SUPABASE_URL}/rest/v1/${tableName}?id=eq.${encodeURIComponent(projectId)}&select=*`,
                 {
                     method: "GET",
                     headers: {
@@ -321,36 +321,6 @@ async function loadProject() {
                 : "";
 
 
-        /* EXTERNAL PROJECT */
-
-        const projectLink =
-            project.project_url
-                ? `
-
-                    <div class="section-divider"></div>
-
-                    <section class="case-section">
-
-                        <div class="case-content">
-
-                            <p>
-                                <a
-                                    href="${escapeHtml(project.project_url)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    View project →
-                                </a>
-                            </p>
-
-                        </div>
-
-                    </section>
-
-                `
-                : "";
-
-
         /* RENDER */
 
         container.innerHTML = `
@@ -415,8 +385,6 @@ async function loadProject() {
 
             ${takeawaySection}
 
-
-            ${projectLink}
 
         `;
 
