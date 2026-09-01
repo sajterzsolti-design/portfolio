@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,7 +9,117 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <link href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =========================================
+           TENEBRAE — COMPACT HERO
+           Scoped to this page only.
+        ========================================= */
+
+        .tenebrae-hero {
+            max-width: 1120px;
+            margin: 70px auto 85px;
+            padding: 0 40px;
+
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            align-items: center;
+            gap: 70px;
+        }
+
+        .tenebrae-hero .practice-case-intro {
+            max-width: 520px;
+            margin: 0;
+        }
+
+        .tenebrae-hero .case-label {
+            font-size: 11px;
+            letter-spacing: 1.8px;
+            margin-bottom: 14px;
+        }
+
+        .tenebrae-hero h1 {
+            font-family: "Average", serif;
+            font-size: 64px;
+            font-weight: 400;
+            line-height: 1;
+            margin: 0 0 18px;
+        }
+
+        .tenebrae-hero .case-subtitle {
+            max-width: 500px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .tenebrae-hero .practice-case-image {
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tenebrae-hero .practice-case-image img {
+            width: 100%;
+            max-width: 620px;
+            height: auto;
+            display: block;
+        }
+
+        @media (max-width: 850px) {
+
+            .tenebrae-hero {
+                grid-template-columns: 1fr;
+                gap: 45px;
+                text-align: center;
+                padding: 0 30px;
+            }
+
+            .tenebrae-hero .practice-case-intro {
+                margin: 0 auto;
+            }
+
+            .tenebrae-hero .case-subtitle {
+                margin: 0 auto;
+            }
+
+            .tenebrae-hero .practice-case-image {
+                max-width: 620px;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .tenebrae-hero {
+                margin: 45px auto 60px;
+                padding: 0 20px;
+                gap: 32px;
+            }
+
+            .tenebrae-hero h1 {
+                font-size: 46px;
+            }
+
+            .tenebrae-hero .case-subtitle {
+                font-size: 15px;
+            }
+
+            .tenebrae-hero .practice-case-image,
+            .tenebrae-hero .practice-case-image img {
+                max-width: 100%;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -29,7 +138,7 @@
 
     <!-- HERO -->
 
-    <section class="practice-case-hero">
+    <section class="tenebrae-hero">
 
         <div class="practice-case-intro">
 
@@ -176,28 +285,27 @@
 
     <!-- MORE -->
 
-<section class="practice-next-projects">
+    <section class="practice-next-projects">
 
-    <p class="case-label">
-        MORE DESIGN PRACTICE
-    </p>
+        <p class="case-label">
+            MORE DESIGN PRACTICE
+        </p>
 
-    <div class="practice-next-links">
+        <div class="practice-next-links">
 
-        <a href="practice-crumbs.html">
-            Crumbs & Tails
-            <span>→</span>
-        </a>
+            <a href="practice-crumbs.html">
+                Crumbs &amp; Tails
+                <span>→</span>
+            </a>
 
-        <a href="pet-haven.html">
-            Pet Haven
-            <span>→</span>
-        </a>
+            <a href="pet-haven.html">
+                Pet Haven
+                <span>→</span>
+            </a>
 
-    </div>
+        </div>
 
-</section>
-
+    </section>
 
 </body>
 
