@@ -19,179 +19,15 @@
         rel="stylesheet"
     >
 
-    <style>
-
-        .case-page {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 40px 100px;
-        }
-
-        .case-nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 40px;
-        }
-
-        .case-nav a {
-            text-decoration: none;
-        }
-
-        .case-hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
-            padding: 80px 0;
-        }
-
-        .case-label {
-            font-size: 13px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-        }
-
-        .case-hero h1 {
-            font-family: "Average", serif;
-            font-size: clamp(48px, 7vw, 90px);
-            line-height: 0.95;
-            margin: 0 0 25px;
-        }
-
-        .case-subtitle {
-            font-size: 20px;
-            line-height: 1.6;
-            max-width: 600px;
-        }
-
-        .hero-mockup img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-
-        .project-summary {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            padding: 40px 0;
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .project-summary span {
-            display: block;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #777;
-            margin-bottom: 10px;
-        }
-
-        .project-summary h3 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .case-section {
-            padding: 90px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .case-section h2 {
-            font-family: "Average", serif;
-            font-size: 48px;
-            margin: 0 0 35px;
-        }
-
-        .case-content {
-            max-width: 800px;
-        }
-
-        .case-content p {
-            font-size: 18px;
-            line-height: 1.8;
-            margin: 0 0 25px;
-        }
-
-        .case-project {
-            margin-top: 50px;
-        }
-
-        .case-project img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-
-        .project-link-button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 14px 22px;
-            background: #111;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .project-link-button:hover {
-            background: #333;
-        }
-
-        .loading,
-        .error {
-            padding: 100px 0;
-        }
-
-        @media (max-width: 800px) {
-
-            .case-page {
-                padding: 20px 20px 70px;
-            }
-
-            .case-nav {
-                padding: 20px;
-            }
-
-            .case-hero {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                padding: 50px 0;
-            }
-
-            .project-summary {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .case-section {
-                padding: 60px 0;
-            }
-
-        }
-
-        @media (max-width: 500px) {
-
-            .project-summary {
-                grid-template-columns: 1fr;
-            }
-
-            .case-hero h1 {
-                font-size: 52px;
-            }
-
-        }
-
-    </style>
-
 </head>
 
 
 <body>
 
+
+<!-- =========================
+     NAVIGATION
+========================= -->
 
 <nav class="case-nav">
 
@@ -202,20 +38,25 @@
 </nav>
 
 
-<main class="case-page">
 
-    <div
-        id="project-container"
-        class="loading"
-    >
-        <p>Loading project...</p>
-    </div>
+<!-- =========================
+     PROJECT
+========================= -->
+
+<main id="project-container">
+
+    <p>Loading project...</p>
 
 </main>
 
 
+
 <script>
 
+
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
     "https://emuudatwzvzwfvxyoeed.supabase.co";
@@ -225,13 +66,14 @@ const SUPABASE_KEY =
 
 
 
+/* =========================
+   LOAD PROJECT
+========================= */
+
 async function loadProject() {
 
-
     const container =
-        document.getElementById(
-            "project-container"
-        );
+        document.getElementById("project-container");
 
 
     const params =
@@ -247,18 +89,20 @@ async function loadProject() {
     if (!projectId) {
 
         container.innerHTML = `
-            <div class="error">
-                <p>Project not found.</p>
-            </div>
+            <p>Project not found.</p>
         `;
 
         return;
-
     }
+
 
 
     try {
 
+
+        /* =========================
+           GET PROJECT
+        ========================= */
 
         const response =
             await fetch(
@@ -268,8 +112,7 @@ async function loadProject() {
 
                     headers: {
                         "apikey": SUPABASE_KEY,
-                        "Authorization":
-                            `Bearer ${SUPABASE_KEY}`
+                        "Authorization": `Bearer ${SUPABASE_KEY}`
                     }
                 }
             );
@@ -277,22 +120,19 @@ async function loadProject() {
 
         if (!response.ok) {
 
-            const errorText =
+            const error =
                 await response.text();
 
             console.error(
                 "Supabase error:",
-                errorText
+                error
             );
 
             container.innerHTML = `
-                <div class="error">
-                    <p>Failed to load project.</p>
-                </div>
+                <p>Failed to load project.</p>
             `;
 
             return;
-
         }
 
 
@@ -303,13 +143,10 @@ async function loadProject() {
         if (!projects.length) {
 
             container.innerHTML = `
-                <div class="error">
-                    <p>Project not found.</p>
-                </div>
+                <p>Project not found.</p>
             `;
 
             return;
-
         }
 
 
@@ -317,156 +154,90 @@ async function loadProject() {
             projects[0];
 
 
+
+        /* =========================
+           PAGE TITLE
+        ========================= */
+
         document.title =
             `${project.title || "Project"} | Zsolti Sajter`;
 
 
 
-        /* ==========================
-           BASIC CONTENT
-        ========================== */
-
-
-        const category =
-            project.category || "PROJECT";
-
-
-        const title =
-            project.title || "";
-
-
-        const subtitle =
-            project.case_subtitle ||
-            project.description ||
-            "";
-
-
-        const description =
-            project.description ||
-            "";
-
-
-
-        /* ==========================
+        /* =========================
            IMAGE
-        ========================== */
-
+        ========================= */
 
         const heroImage =
             project.image_url
                 ? `
-                    <div class="hero-mockup">
-
-                        <img
-                            src="${escapeHtml(project.image_url)}"
-                            alt="${escapeHtml(title)}"
-                        >
-
-                    </div>
-                `
-                : "";
-
-
-
-        /* ==========================
-           CASE STUDY SECTIONS
-        ========================== */
-
-
-        const about =
-            project.case_about ||
-            description ||
-            "";
-
-
-        const direction =
-            project.case_direction ||
-            "";
-
-
-        const takeaway =
-            project.case_takeaway ||
-            "";
-
-
-        const caseProject =
-            project.case_project ||
-            "";
-
-
-
-        /* ==========================
-           PROJECT URL
-        ========================== */
-
-
-        const projectUrl =
-            project.project_url
-                ? `
-                    <a
-                        href="${escapeHtml(project.project_url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="project-link-button"
+                    <img
+                        src="${escapeHtml(project.image_url)}"
+                        alt="${escapeHtml(project.title || "Project")}"
                     >
-                        View project →
-                    </a>
                 `
                 : "";
 
 
 
-        /* ==========================
-           RENDER
-        ========================== */
-
+        /* =========================
+           HERO
+        ========================= */
 
         container.innerHTML = `
 
-
             <section class="case-hero">
-
 
                 <div class="hero-left">
 
-
                     <p class="case-label">
-                        ${escapeHtml(category)}
+                        ${escapeHtml(
+                            project.category ||
+                            "PROJECT"
+                        )}
                     </p>
 
 
                     <h1>
-                        ${escapeHtml(title)}
+                        ${escapeHtml(
+                            project.title || ""
+                        )}
                     </h1>
 
 
-                    ${
-                        subtitle
-                            ? `
-                                <p class="case-subtitle">
-                                    ${escapeHtml(subtitle)}
-                                </p>
-                            `
-                            : ""
-                    }
-
+                    <p class="case-subtitle">
+                        ${escapeHtml(
+                            project.case_subtitle ||
+                            project.description ||
+                            ""
+                        )}
+                    </p>
 
                 </div>
 
 
-                ${heroImage}
+                <div class="hero-mockup">
 
+                    ${heroImage}
+
+                </div>
 
             </section>
 
 
+
+            <!-- =========================
+                 PROJECT SUMMARY
+            ========================= -->
 
             <section class="project-summary">
 
 
                 <div>
 
-                    <span>Type</span>
+                    <span>
+                        Type
+                    </span>
 
                     <h3>
                         ${escapeHtml(
@@ -477,9 +248,12 @@ async function loadProject() {
                 </div>
 
 
+
                 <div>
 
-                    <span>Focus</span>
+                    <span>
+                        Focus
+                    </span>
 
                     <h3>
                         ${escapeHtml(
@@ -490,9 +264,12 @@ async function loadProject() {
                 </div>
 
 
+
                 <div>
 
-                    <span>Tools</span>
+                    <span>
+                        Tools
+                    </span>
 
                     <h3>
                         ${escapeHtml(
@@ -503,16 +280,18 @@ async function loadProject() {
                 </div>
 
 
+
                 <div>
 
-                    <span>Project</span>
+                    <span>
+                        Project
+                    </span>
 
                     <h3>
-                        ${
-                            project.featured
-                                ? "Featured"
-                                : "Portfolio Project"
-                        }
+                        ${escapeHtml(
+                            project.case_project ||
+                            "—"
+                        )}
                     </h3>
 
                 </div>
@@ -522,130 +301,128 @@ async function loadProject() {
 
 
 
+            <div class="section-divider"></div>
+
+
+
+            <!-- =========================
+                 ABOUT
+            ========================= -->
+
+            <section class="case-section">
+
+
+                <h2>
+                    About the project
+                </h2>
+
+
+                <div class="case-content">
+
+                    <p>
+                        ${escapeHtml(
+                            project.case_about ||
+                            project.description ||
+                            ""
+                        )}
+                    </p>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 DESIGN DIRECTION
+            ========================= -->
+
             ${
-                about
-                    ? `
+                project.case_direction
+                ? `
 
-                        <section class="case-section">
+                    <section class="case-section">
 
+                        <h2>
+                            Design direction
+                        </h2>
 
-                            <h2>
-                                About the project
-                            </h2>
+                        <div class="case-content">
 
+                            <p>
+                                ${escapeHtml(
+                                    project.case_direction
+                                )}
+                            </p>
 
-                            <div class="case-content">
+                        </div>
 
-                                ${formatText(about)}
+                    </section>
 
-                            </div>
-
-
-                        </section>
-
-                    `
-                    : ""
+                `
+                : ""
             }
 
 
 
+            <!-- =========================
+                 TAKEAWAY
+            ========================= -->
+
             ${
-                caseProject
-                    ? `
+                project.case_takeaway
+                ? `
 
-                        <section class="case-section">
+                    <section class="case-section">
 
+                        <h2>
+                            Takeaway
+                        </h2>
 
-                            <h2>
-                                Project
-                            </h2>
+                        <div class="case-content">
 
+                            <p>
+                                ${escapeHtml(
+                                    project.case_takeaway
+                                )}
+                            </p>
 
-                            <div class="case-content">
+                        </div>
 
-                                ${formatText(caseProject)}
+                    </section>
 
-                            </div>
-
-
-                        </section>
-
-                    `
-                    : ""
+                `
+                : ""
             }
 
 
 
-            ${
-                direction
-                    ? `
-
-                        <section class="case-section">
-
-
-                            <h2>
-                                Design direction
-                            </h2>
-
-
-                            <div class="case-content">
-
-                                ${formatText(direction)}
-
-                            </div>
-
-
-                        </section>
-
-                    `
-                    : ""
-            }
-
-
+            <!-- =========================
+                 PROJECT LINK
+            ========================= -->
 
             ${
-                takeaway
-                    ? `
+                project.project_url
+                ? `
 
-                        <section class="case-section">
+                    <section class="case-section">
 
+                        <a
+                            class="cta-btn"
+                            href="${escapeHtml(
+                                project.project_url
+                            )}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View project →
+                        </a>
 
-                            <h2>
-                                Takeaway
-                            </h2>
+                    </section>
 
-
-                            <div class="case-content">
-
-                                ${formatText(takeaway)}
-
-                            </div>
-
-
-                        </section>
-
-                    `
-                    : ""
-            }
-
-
-
-            ${
-                projectUrl
-                    ? `
-
-                        <section class="case-section">
-
-                            <div class="case-content">
-
-                                ${projectUrl}
-
-                            </div>
-
-                        </section>
-
-                    `
-                    : ""
+                `
+                : ""
             }
 
 
@@ -663,9 +440,9 @@ async function loadProject() {
 
 
         container.innerHTML = `
-            <div class="error">
-                <p>Failed to load project.</p>
-            </div>
+            <p>
+                Failed to load project.
+            </p>
         `;
 
     }
@@ -674,29 +451,9 @@ async function loadProject() {
 
 
 
-/* ==========================
-   TEXT FORMATTING
-========================== */
-
-
-function formatText(text) {
-
-    return String(text)
-        .split(/\n\s*\n/)
-        .map(
-            paragraph =>
-                `<p>${escapeHtml(paragraph.trim())}</p>`
-        )
-        .join("");
-
-}
-
-
-
-/* ==========================
+/* =========================
    HTML ESCAPE
-========================== */
-
+========================= */
 
 function escapeHtml(value) {
 
@@ -731,7 +488,12 @@ function escapeHtml(value) {
 
 
 
+/* =========================
+   START
+========================= */
+
 loadProject();
+
 
 </script>
 
