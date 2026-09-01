@@ -599,6 +599,9 @@
             "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
 
         let accessToken = null;
+        let refreshToken = null;
+        let sessionExpiresAt = 0;
+        let refreshTimer = null;
         let currentTable = null;
         let currentProjectId = null;
 
@@ -613,6 +616,103 @@
                 "Authorization": `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             };
+        }
+
+
+        function saveSession(data) {
+            accessToken = data.access_token;
+            refreshToken = data.refresh_token || refreshToken;
+            sessionExpiresAt = Date.now() + ((data.expires_in || 3600) * 1000);
+
+            localStorage.setItem("portfolioSession", JSON.stringify({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+                expires_at: sessionExpiresAt
+            }));
+
+            scheduleRefresh();
+        }
+
+
+        function clearSession() {
+            accessToken = null;
+            refreshToken = null;
+            sessionExpiresAt = 0;
+
+            if (refreshTimer) {
+                clearTimeout(refreshTimer);
+                refreshTimer = null;
+            }
+
+            localStorage.removeItem("portfolioSession");
+        }
+
+
+        async function refreshSession() {
+            if (!refreshToken) {
+                return false;
+            }
+
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            refresh_token: refreshToken
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    clearSession();
+                    return false;
+                }
+
+                const data = await response.json();
+                saveSession(data);
+                return true;
+            } catch (error) {
+                console.error("Session refresh failed:", error);
+                clearSession();
+                return false;
+            }
+        }
+
+
+        function scheduleRefresh() {
+            if (refreshTimer) {
+                clearTimeout(refreshTimer);
+            }
+
+            const delay = Math.max(
+                30000,
+                sessionExpiresAt - Date.now() - 60000
+            );
+
+            refreshTimer = setTimeout(async () => {
+                const refreshed = await refreshSession();
+
+                if (!refreshed) {
+                    showLogin();
+                }
+            }, delay);
+        }
+
+
+        function showDashboard() {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+        }
+
+
+        function showLogin() {
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("login-section").style.display = "block";
         }
 
 
@@ -731,16 +831,8 @@
                     const data =
                         await response.json();
 
-                    accessToken =
-                        data.access_token;
-
-                    document
-                        .getElementById("login-section")
-                        .style.display = "none";
-
-                    document
-                        .getElementById("dashboard")
-                        .style.display = "block";
+                    saveSession(data);
+                    showDashboard();
 
                     await loadAdminProjects();
                     await loadAdminPracticeProjects();
@@ -1784,6 +1876,45 @@
 
 
         /* =================================
+           RESTORE SESSION
+        ================================= */
+
+        (async function restoreSession() {
+            try {
+                const stored =
+                    JSON.parse(localStorage.getItem("portfolioSession") || "null");
+
+                if (!stored || !stored.refresh_token) {
+                    return;
+                }
+
+                accessToken = stored.access_token || null;
+                refreshToken = stored.refresh_token;
+                sessionExpiresAt = Number(stored.expires_at || 0);
+
+                if (!accessToken || Date.now() >= sessionExpiresAt - 60000) {
+                    const refreshed = await refreshSession();
+
+                    if (!refreshed) {
+                        showLogin();
+                        return;
+                    }
+                } else {
+                    scheduleRefresh();
+                }
+
+                showDashboard();
+                await loadAdminProjects();
+                await loadAdminPracticeProjects();
+
+            } catch (error) {
+                console.error("Session restore failed:", error);
+                clearSession();
+            }
+        })();
+
+
+        /* =================================
            LOGOUT
         ================================= */
 
@@ -1791,7 +1922,7 @@
             .getElementById("logout-button")
             .addEventListener("click", function() {
 
-                accessToken = null;
+                clearSession();
                 currentTable = null;
                 currentProjectId = null;
 
