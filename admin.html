@@ -202,6 +202,7 @@
         }
 
         #current-image,
+        #current-hero-image,
         #current-case-image {
             max-width: 200px;
             max-height: 150px;
@@ -499,17 +500,16 @@
 
 
                 <label class="form-label">
-                    Current Image
+                    Current Card Image
                 </label>
 
                 <img
                     id="current-image"
-                    alt="Current project image"
+                    alt="Current card image"
                 >
 
-
                 <label class="form-label" for="project-image">
-                    Main Image
+                    Card Image
                 </label>
 
                 <input
@@ -518,6 +518,24 @@
                     accept="image/*"
                 >
 
+                <label class="form-label">
+                    Current Hero Image
+                </label>
+
+                <img
+                    id="current-hero-image"
+                    alt="Current hero image"
+                >
+
+                <label class="form-label" for="project-hero-image">
+                    Hero Image
+                </label>
+
+                <input
+                    type="file"
+                    id="project-hero-image"
+                    accept="image/*"
+                >
 
                 <label class="form-label">
                     Current Case Study Image
@@ -527,7 +545,6 @@
                     id="current-case-image"
                     alt="Current case study image"
                 >
-
 
                 <label class="form-label" for="project-case-image">
                     Case Study Image
@@ -1016,6 +1033,14 @@
                 .value = "";
 
             document
+                .getElementById("current-hero-image")
+                .style.display = "none";
+
+            document
+                .getElementById("project-hero-image")
+                .value = "";
+
+            document
                 .getElementById("current-case-image")
                 .style.display = "none";
 
@@ -1172,6 +1197,21 @@
                     .getElementById("project-image")
                     .value = "";
 
+                const currentHeroImage =
+                    document.getElementById("current-hero-image");
+
+                if (project.hero_image_url) {
+                    currentHeroImage.src = project.hero_image_url;
+                    currentHeroImage.style.display = "block";
+                } else {
+                    currentHeroImage.removeAttribute("src");
+                    currentHeroImage.style.display = "none";
+                }
+
+                document
+                    .getElementById("project-hero-image")
+                    .value = "";
+
                 if (project.case_image_url) {
                     currentCaseImage.src =
                         project.case_image_url;
@@ -1319,6 +1359,12 @@
                     let oldImageUrl =
                         oldProject?.image_url || null;
 
+                    let heroImageUrl =
+                        oldProject?.hero_image_url || null;
+
+                    let oldHeroImageUrl =
+                        oldProject?.hero_image_url || null;
+
                     let caseImageUrl =
                         oldProject?.case_image_url || null;
 
@@ -1328,6 +1374,11 @@
                     const imageFile =
                         document
                             .getElementById("project-image")
+                            .files[0];
+
+                    const heroImageFile =
+                        document
+                            .getElementById("project-hero-image")
                             .files[0];
 
                     const caseImageFile =
@@ -1373,6 +1424,47 @@
                         }
 
                         imageUrl =
+                            `${SUPABASE_URL}/storage/v1/object/public/portfolio-images/${fileName}`;
+                    }
+
+
+                    if (heroImageFile) {
+
+                        const extension =
+                            heroImageFile.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase();
+
+                        const fileName =
+                            `${Date.now()}-${Math.random()
+                                .toString(36)
+                                .substring(2)}.${extension}`;
+
+                        const uploadResponse =
+                            await fetch(
+                                `${SUPABASE_URL}/storage/v1/object/portfolio-images/${fileName}`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "apikey": SUPABASE_KEY,
+                                        "Authorization":
+                                            `Bearer ${accessToken}`,
+                                        "Content-Type":
+                                            heroImageFile.type,
+                                        "x-upsert": "false"
+                                    },
+                                    body: heroImageFile
+                                }
+                            );
+
+                        if (!uploadResponse.ok) {
+                            throw new Error(
+                                `Hero image upload failed: ${await getErrorMessage(uploadResponse)}`
+                            );
+                        }
+
+                        heroImageUrl =
                             `${SUPABASE_URL}/storage/v1/object/public/portfolio-images/${fileName}`;
                     }
 
@@ -1478,6 +1570,7 @@
                                 .value
                                 .trim() || null,
 
+                        hero_image_url: heroImageUrl,
                         case_image_url: caseImageUrl
                     };
 
@@ -1572,6 +1665,16 @@
                         ) {
                             await deleteStorageImage(
                                 oldImageUrl
+                            );
+                        }
+
+                        if (
+                            heroImageFile &&
+                            oldHeroImageUrl &&
+                            heroImageUrl !== oldHeroImageUrl
+                        ) {
+                            await deleteStorageImage(
+                                oldHeroImageUrl
                             );
                         }
 
@@ -1672,6 +1775,24 @@
                 ) {
                     await deleteStorageImage(
                         project.image_url
+                    );
+                }
+
+                if (
+                    project &&
+                    project.hero_image_url
+                ) {
+                    await deleteStorageImage(
+                        project.hero_image_url
+                    );
+                }
+
+                if (
+                    project &&
+                    project.case_image_url
+                ) {
+                    await deleteStorageImage(
+                        project.case_image_url
                     );
                 }
 
