@@ -161,12 +161,12 @@ async function loadProject() {
         /* HERO */
 
         const heroImage =
-            (project.case_image_url || project.image_url)
+            project.hero_image_url || project.image_url
                 ? `
                     <div class="hero-mockup">
 
                         <img
-                            src="${escapeHtml(project.case_image_url || project.image_url)}"
+                            src="${escapeHtml(project.hero_image_url || project.image_url)}"
                             alt="${escapeHtml(project.title || "Project")}"
                         >
 
@@ -319,6 +319,7 @@ async function loadProject() {
 
                 `
                 : "";
+
 
 
         /* RENDER */
