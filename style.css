@@ -1381,3 +1381,44 @@ header{
     }
 
 }
+/* ==========================
+   IMAGE LIGHTBOX
+========================== */
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 9999;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+}
+
+.lightbox.show {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+
+    font-size: 40px;
+    line-height: 1;
+
+    color: white;
+    background: none;
+    border: none;
+
+    cursor: pointer;
+}
