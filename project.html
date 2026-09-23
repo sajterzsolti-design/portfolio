@@ -31,7 +31,7 @@
 </nav>
 
 
-<main id="project-container">
+<main id="project-container" style="visibility: hidden;">
 
 </main>
 
@@ -100,6 +100,8 @@ async function loadProject() {
         container.innerHTML =
             "<p>Project not found.</p>";
 
+        container.style.visibility = "visible";
+
         return;
     }
 
@@ -131,6 +133,8 @@ async function loadProject() {
             container.innerHTML =
                 "<p>Failed to load project.</p>";
 
+            container.style.visibility = "visible";
+
             return;
         }
 
@@ -143,6 +147,8 @@ async function loadProject() {
 
             container.innerHTML =
                 "<p>Project not found.</p>";
+
+            container.style.visibility = "visible";
 
             return;
         }
@@ -231,29 +237,43 @@ async function loadProject() {
 
         const caseSectionsHtml = caseSections
             .map((section) => {
-                const title = escapeHtml(section.title || "");
-                const content = formatParagraphs(section.content || "");
-                const image = section.image_url
-                    ? `
-                        <section class="final-image">
-                            <img
-                                src="${escapeHtml(section.image_url)}"
-                                alt="${escapeHtml(section.image_alt || section.title || "Case study image")}"
-                            >
-                        </section>
-                    `
-                    : "";
+
+                const title =
+                    escapeHtml(section.title || "");
+
+                const content =
+                    formatParagraphs(section.content || "");
+
+                const image =
+                    section.image_url
+                        ? `
+                            <section class="final-image">
+
+                                <img
+                                    src="${escapeHtml(section.image_url)}"
+                                    alt="${escapeHtml(section.image_alt || section.title || "Case study image")}"
+                                >
+
+                            </section>
+                        `
+                        : "";
 
                 return `
                     <div class="section-divider"></div>
+
                     <section class="case-section">
+
                         <h2>${title}</h2>
+
                         <div class="case-content">
                             ${content}
                         </div>
+
                     </section>
+
                     ${image}
                 `;
+
             })
             .join("");
 
@@ -269,27 +289,38 @@ async function loadProject() {
                 <div class="hero-left">
 
                     <p class="case-label">
+
                         ${escapeHtml(
                             project.category ||
                             "UX/UI CASE STUDY"
                         )}
+
                     </p>
 
+
                     <h1>
+
                         ${escapeHtml(project.title || "")}
+
                     </h1>
+
 
                     ${
                         project.case_subtitle
                             ? `
                                 <p class="case-subtitle">
-                                    ${escapeHtml(project.case_subtitle)}
+
+                                    ${escapeHtml(
+                                        project.case_subtitle
+                                    )}
+
                                 </p>
                             `
                             : ""
                     }
 
                 </div>
+
 
                 ${heroImage}
 
@@ -313,8 +344,10 @@ async function loadProject() {
 
             ${caseSectionsHtml}
 
-
         `;
+
+
+        container.style.visibility = "visible";
 
     }
 
@@ -328,13 +361,14 @@ async function loadProject() {
         container.innerHTML =
             "<p>Failed to load project.</p>";
 
+        container.style.visibility = "visible";
+
     }
 
 }
 
 
 loadProject();
-
 
 </script>
 
@@ -375,7 +409,9 @@ const lightboxClose =
 function openLightbox(image) {
 
     lightboxImage.src = image.src;
-    lightboxImage.alt = image.alt || "";
+
+    lightboxImage.alt =
+        image.alt || "";
 
     lightbox.classList.add("show");
 
@@ -385,23 +421,30 @@ function openLightbox(image) {
 function closeLightbox() {
 
     lightbox.classList.remove("show");
+
     lightboxImage.src = "";
 
 }
 
 
-document.addEventListener("click", function(event) {
+document.addEventListener(
+    "click",
+    function(event) {
 
-    const image = event.target.closest("img");
+        const image =
+            event.target.closest("img");
 
-    if (
-        image &&
-        !image.closest(".lightbox")
-    ) {
-        openLightbox(image);
+        if (
+            image &&
+            !image.closest(".lightbox")
+        ) {
+
+            openLightbox(image);
+
+        }
+
     }
-
-});
+);
 
 
 lightboxClose.addEventListener(
@@ -415,7 +458,9 @@ lightbox.addEventListener(
     function(event) {
 
         if (event.target === lightbox) {
+
             closeLightbox();
+
         }
 
     }
@@ -427,7 +472,9 @@ document.addEventListener(
     function(event) {
 
         if (event.key === "Escape") {
+
             closeLightbox();
+
         }
 
     }
