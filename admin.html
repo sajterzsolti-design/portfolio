@@ -223,6 +223,49 @@
             margin-top: 15px;
         }
 
+        .legacy-sections-header {
+            margin: 30px 0 15px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .legacy-sections-header h3 {
+            margin: 0 0 6px;
+        }
+
+        .legacy-sections-header p {
+            margin: 0 0 18px;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .case-section-editor {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 16px;
+            background: #fafafa;
+        }
+
+        .case-section-editor h4 {
+            margin: 0 0 15px;
+            font-size: 18px;
+        }
+
+        .case-section-editor textarea {
+            min-height: 180px;
+        }
+
+        .section-current-image {
+            max-width: 260px;
+            max-height: 180px;
+            display: none;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
         @media (max-width: 600px) {
             body {
                 margin: 20px auto;
@@ -486,6 +529,29 @@
                     id="project-case-takeaway"
                     placeholder="What did you learn from this project?"
                 ></textarea>
+
+
+                <label class="form-label" for="project-case-timeline">
+                    Timeline
+                </label>
+
+                <input
+                    type="text"
+                    id="project-case-timeline"
+                    placeholder="e.g. 4 Months"
+                >
+
+
+                <div id="legacy-sections-wrapper" style="display:none;">
+
+                    <div class="legacy-sections-header">
+                        <h3>Case Study Sections</h3>
+                        <p>For the existing static HTML projects, these sections control the content shown on the case study page.</p>
+                    </div>
+
+                    <div id="case-sections-editor"></div>
+
+                </div>
 
 
                 <label class="form-label" for="project-url">
@@ -1003,6 +1069,145 @@
 
 
         /* =================================
+           STATIC CASE STUDY SECTIONS
+        ================================= */
+
+        function isStaticCaseProject(table, projectUrl) {
+            const staticUrls = new Set([
+                "arteum-mobile.html",
+                "arteum-web.html",
+                "meditime.html",
+                "practice-crumbs.html",
+                "pet-haven.html",
+                "tenebrae.html"
+            ]);
+
+            return (
+                (table === "projects" || table === "practice_projects") &&
+                staticUrls.has((projectUrl || "").trim())
+            );
+        }
+
+
+        function escapeAttribute(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+
+        function renderLegacySections(sections) {
+            const wrapper = document.getElementById("legacy-sections-wrapper");
+            const container = document.getElementById("case-sections-editor");
+
+            if (!wrapper || !container) return;
+
+            if (!Array.isArray(sections) || !sections.length) {
+                wrapper.style.display = "none";
+                container.innerHTML = "";
+                return;
+            }
+
+            wrapper.style.display = "block";
+
+            container.innerHTML = sections.map((section, index) => `
+                <div class="case-section-editor" data-section-index="${index}">
+                    <h4>Section ${index + 1}</h4>
+
+                    <label class="form-label">Section Title</label>
+                    <input
+                        type="text"
+                        class="legacy-section-title"
+                        value="${escapeAttribute(section.title || "")}"
+                    >
+
+                    <label class="form-label">Content</label>
+                    <textarea
+                        class="legacy-section-content"
+                        placeholder="Separate paragraphs with a blank line.
+
+Example paragraph one.
+
+Example paragraph two."
+                    >${escapeHtml(section.content || "")}</textarea>
+
+                    <label class="form-label">Current Section Image</label>
+                    <img
+                        class="section-current-image"
+                        alt="Current section image"
+                        src="${escapeAttribute(section.image_url || "")}"
+                        style="${section.image_url ? "display:block;" : "display:none;"}"
+                    >
+
+                    <label class="form-label">Replace Section Image</label>
+                    <input
+                        type="file"
+                        class="legacy-section-image"
+                        accept="image/*"
+                    >
+                </div>
+            `).join("");
+        }
+
+
+        function getLegacySectionsFromForm(oldSections) {
+            const editors = Array.from(
+                document.querySelectorAll(".case-section-editor")
+            );
+
+            return editors.map((editor, index) => ({
+                title: editor
+                    .querySelector(".legacy-section-title")
+                    ?.value
+                    .trim() || "",
+                content: editor
+                    .querySelector(".legacy-section-content")
+                    ?.value
+                    .trim() || "",
+                image_url: oldSections?.[index]?.image_url || null,
+                image_alt: oldSections?.[index]?.image_alt || ""
+            }));
+        }
+
+
+        async function uploadPortfolioImage(file, errorLabel) {
+            const extension =
+                file.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+            const fileName =
+                `${Date.now()}-${Math.random().toString(36).substring(2)}.${extension}`;
+
+            const response = await fetch(
+                `${SUPABASE_URL}/storage/v1/object/portfolio-images/${fileName}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "apikey": SUPABASE_KEY,
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": file.type,
+                        "x-upsert": "false"
+                    },
+                    body: file
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `${errorLabel}: ${await getErrorMessage(response)}`
+                );
+            }
+
+            return `${SUPABASE_URL}/storage/v1/object/public/portfolio-images/${fileName}`;
+        }
+
+
+        /* =================================
            ADD
         ================================= */
 
@@ -1047,6 +1252,20 @@
             document
                 .getElementById("project-case-image")
                 .value = "";
+
+            document
+                .getElementById("project-case-timeline")
+                .value = "";
+
+            const legacyWrapper = document.getElementById("legacy-sections-wrapper");
+            if (legacyWrapper) {
+                legacyWrapper.style.display = "none";
+            }
+
+            const legacyEditor = document.getElementById("case-sections-editor");
+            if (legacyEditor) {
+                legacyEditor.innerHTML = "";
+            }
 
             document
                 .getElementById("editor-modal")
@@ -1160,6 +1379,17 @@
                     .getElementById("project-url")
                     .value =
                         project.project_url || "";
+
+                document
+                    .getElementById("project-case-timeline")
+                    .value =
+                        project.case_timeline || "";
+
+                if (isStaticCaseProject(table, project.project_url)) {
+                    renderLegacySections(project.case_sections || []);
+                } else {
+                    renderLegacySections([]);
+                }
 
                 document
                     .getElementById("project-featured")
@@ -1510,6 +1740,36 @@
                     }
 
 
+                    /* LEGACY CASE SECTIONS */
+
+                    let caseSections = oldProject?.case_sections || [];
+
+                    if (isStaticCaseProject(currentTable, projectUrl)) {
+                        caseSections = getLegacySectionsFromForm(
+                            oldProject?.case_sections || []
+                        );
+
+                        const editors = Array.from(
+                            document.querySelectorAll(".case-section-editor")
+                        );
+
+                        for (let i = 0; i < editors.length; i++) {
+                            const fileInput =
+                                editors[i].querySelector(".legacy-section-image");
+
+                            const file = fileInput?.files?.[0];
+
+                            if (file) {
+                                caseSections[i].image_url =
+                                    await uploadPortfolioImage(
+                                        file,
+                                        `Section ${i + 1} image upload failed`
+                                    );
+                            }
+                        }
+                    }
+
+
                     /* DATA */
 
                     const projectData = {
@@ -1570,8 +1830,15 @@
                                 .value
                                 .trim() || null,
 
+                        case_timeline:
+                            document
+                                .getElementById("project-case-timeline")
+                                .value
+                                .trim() || null,
+
                         hero_image_url: heroImageUrl,
-                        case_image_url: caseImageUrl
+                        case_image_url: caseImageUrl,
+                        case_sections: caseSections
                     };
 
 
@@ -1686,6 +1953,20 @@
                             await deleteStorageImage(
                                 oldCaseImageUrl
                             );
+                        }
+
+                        if (isStaticCaseProject(currentTable, projectUrl)) {
+                            const oldSections = oldProject?.case_sections || [];
+                            const newSections = projectData.case_sections || [];
+
+                            for (let i = 0; i < oldSections.length; i++) {
+                                const oldUrl = oldSections[i]?.image_url;
+                                const newUrl = newSections[i]?.image_url;
+
+                                if (oldUrl && oldUrl !== newUrl && newUrl) {
+                                    await deleteStorageImage(oldUrl);
+                                }
+                            }
                         }
                     }
 
