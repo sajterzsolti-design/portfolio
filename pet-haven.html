@@ -314,6 +314,455 @@
     </section>
 
 
+
+<script>
+    /* CMS SYNC FOR STATIC CASE STUDY */
+    const CMS_URL = "https://emuudatwzvzwfvxyoeed.supabase.co";
+    const CMS_KEY = "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
+    const CMS_TABLE = "practice_projects";
+    const CMS_PROJECT_URL = "pet-haven.html";
+
+    function cmsEscape(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function renderParagraphs(text) {
+        return String(text || "")
+            .trim()
+            .split(/\n\s*\n/)
+            .filter(Boolean)
+            .map(p => `<p>${cmsEscape(p).replace(/\n/g, "<br>")}</p>`)
+            .join("");
+    }
+
+    function syncText(selector, value) {
+        const el = document.querySelector(selector);
+        if (el && value != null && value !== "") el.textContent = value;
+    }
+
+    function syncSection(sectionEl, sectionData) {
+        if (!sectionData) {
+            sectionEl.style.display = "none";
+            return;
+        }
+
+        sectionEl.style.display = "";
+
+        const heading = sectionEl.querySelector("h2");
+        if (heading) heading.textContent = sectionData.title || "";
+
+        const content = sectionEl.querySelector(".case-content");
+        if (content) content.innerHTML = renderParagraphs(sectionData.content || "");
+
+        let sibling = sectionEl.nextElementSibling;
+        let imageBlock = null;
+
+        while (sibling) {
+            if (sibling.classList.contains("case-section")) break;
+            if (sibling.querySelector && sibling.querySelector("img") &&
+                (sibling.classList.contains("persona-image") ||
+                 sibling.classList.contains("wireframe-image") ||
+                 sibling.classList.contains("final-image") ||
+                 sibling.classList.contains("practice-full-image") ||
+                 sibling.classList.contains("practice-case-gallery"))) {
+                imageBlock = sibling;
+                break;
+            }
+            sibling = sibling.nextElementSibling;
+        }
+
+        if (imageBlock) {
+            const img = imageBlock.querySelector("img");
+            if (sectionData.image_url) {
+                imageBlock.style.display = "";
+                img.src = sectionData.image_url;
+                img.alt = sectionData.image_alt || sectionData.title || "Case study image";
+            } else {
+                imageBlock.style.display = "none";
+            }
+        }
+    }
+
+    async function syncCms() {
+        try {
+            const response = await fetch(
+                `${CMS_URL}/rest/v1/${CMS_TABLE}?project_url=eq.${encodeURIComponent(CMS_PROJECT_URL)}&select=*`,
+                { headers: { apikey: CMS_KEY } }
+            );
+
+            if (!response.ok) return;
+
+            const rows = await response.json();
+            const project = rows[0];
+            if (!project) return;
+
+            syncText(".case-label", project.category);
+            syncText(".hero-left h1, .practice-case-intro h1", project.title);
+            syncText(".hero-left .case-subtitle, .practice-case-intro .case-subtitle", project.case_subtitle);
+
+            const heroImg = document.querySelector(".hero-mockup img, .practice-case-image img");
+            if (heroImg && (project.hero_image_url || project.image_url)) {
+                heroImg.src = project.hero_image_url || project.image_url;
+                heroImg.alt = project.title || heroImg.alt;
+            }
+
+            const summary = document.querySelectorAll(".project-summary > div");
+            if (summary.length >= 4) {
+                const values = [
+                    project.case_type,
+                    project.case_timeline,
+                    project.case_tools,
+                    project.case_focus
+                ];
+                values.forEach((value, index) => {
+                    const h3 = summary[index]?.querySelector("h3");
+                    if (h3 && value) h3.textContent = value;
+                });
+
+                if (CMS_TABLE === "practice_projects") {
+                    const practiceValues = [project.case_type, project.case_focus, project.case_tools, project.case_project];
+                    practiceValues.forEach((value, index) => {
+                        const h3 = summary[index]?.querySelector("h3");
+                        if (h3 && value) h3.textContent = value;
+                    });
+                }
+            }
+
+            const sections = Array.isArray(project.case_sections) ? project.case_sections : [];
+            const pageSections = Array.from(document.querySelectorAll(".case-section"));
+            if (sections.length && pageSections.length) {
+                pageSections.forEach((sectionEl, index) => syncSection(sectionEl, sections[index]));
+            }
+
+            document.title = `${project.title || document.title.replace(" | Case Study", "")} | Case Study`;
+        } catch (error) {
+            console.warn("CMS sync unavailable; using static page content.", error);
+        }
+    }
+
+    syncCms();
+</script>
+
+</body>
+
+</html>
+"en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pet Haven | Design Practice</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Average&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =========================================
+           PET HAVEN — HERO ONLY
+           Scoped to this page so the rest of the
+           portfolio remains unchanged.
+        ========================================= */
+
+        .pet-haven-hero {
+            max-width: 1120px;
+            margin: 70px auto 85px;
+            padding: 0 40px;
+
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            align-items: center;
+            gap: 70px;
+        }
+
+        .pet-haven-hero .practice-case-intro {
+            max-width: 520px;
+            margin: 0;
+        }
+
+        .pet-haven-hero .case-label {
+            font-size: 11px;
+            letter-spacing: 1.8px;
+            margin-bottom: 14px;
+        }
+
+        .pet-haven-hero h1 {
+            font-family: "Average", serif;
+            font-size: 64px;
+            font-weight: 400;
+            line-height: 1;
+            margin: 0 0 18px;
+        }
+
+        .pet-haven-hero .case-subtitle {
+            max-width: 500px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .pet-haven-hero .practice-case-image {
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .pet-haven-hero .practice-case-image img {
+            width: 100%;
+            max-width: 620px;
+            height: auto;
+            display: block;
+        }
+
+
+        @media (max-width: 850px) {
+
+            .pet-haven-hero {
+                grid-template-columns: 1fr;
+                gap: 45px;
+                text-align: center;
+                padding: 0 30px;
+            }
+
+            .pet-haven-hero .practice-case-intro {
+                margin: 0 auto;
+            }
+
+            .pet-haven-hero .practice-case-image {
+                max-width: 620px;
+            }
+
+            .pet-haven-hero .case-subtitle {
+                margin: 0 auto;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .pet-haven-hero {
+                margin: 45px auto 60px;
+                padding: 0 20px;
+                gap: 32px;
+            }
+
+            .pet-haven-hero h1 {
+                font-size: 46px;
+            }
+
+            .pet-haven-hero .case-subtitle {
+                font-size: 15px;
+            }
+
+            .pet-haven-hero .practice-case-image,
+            .pet-haven-hero .practice-case-image img {
+                max-width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- BACK -->
+
+    <nav class="case-nav">
+
+        <a href="index.html">
+            ← Back to Portfolio
+        </a>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="pet-haven-hero">
+
+        <div class="practice-case-intro">
+
+            <p class="case-label">
+                DESIGN PRACTICE
+            </p>
+
+            <h1>
+                Pet Haven
+            </h1>
+
+            <p class="case-subtitle">
+                A responsive animal adoption website designed to create a warm,
+                friendly, and easy-to-navigate experience for potential adopters.
+            </p>
+
+        </div>
+
+
+        <div class="practice-case-image">
+
+            <img
+                src="images/pet-haven.png"
+                alt="Pet Haven website design"
+            >
+
+        </div>
+
+    </section>
+
+
+    <!-- PROJECT INFO -->
+
+    <section class="project-summary">
+
+        <div>
+            <span>Type</span>
+            <h3>Web Design</h3>
+        </div>
+
+        <div>
+            <span>Focus</span>
+            <h3>UI Design</h3>
+        </div>
+
+        <div>
+            <span>Tools</span>
+            <h3>Figma</h3>
+        </div>
+
+        <div>
+            <span>Project</span>
+            <h3>Self-initiated</h3>
+        </div>
+
+    </section>
+
+
+    <div class="section-divider"></div>
+
+
+    <!-- CONCEPT -->
+
+    <section class="case-section">
+
+        <h2>
+            Concept
+        </h2>
+
+        <div class="case-content">
+
+            <p>
+                Pet Haven is a fictional animal adoption platform created as
+                a web design exercise. The goal was to create a welcoming
+                digital experience that makes discovering adoptable animals
+                feel simple and approachable.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <div class="section-divider"></div>
+
+
+    <!-- DESIGN -->
+
+    <section class="case-section">
+
+        <h2>
+            Design
+        </h2>
+
+        <div class="case-content">
+
+            <p>
+                The visual direction combines soft neutral backgrounds with
+                deep green accents to create a calm and trustworthy feeling.
+                Large animal photography, rounded cards, clear typography,
+                and simple calls to action keep the interface friendly and
+                easy to scan.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- DESIGN IMAGE -->
+
+    <section class="practice-case-gallery">
+
+        <img
+            src="images/pet-haven-full.jpg"
+            alt="Pet Haven website interface"
+        >
+
+    </section>
+
+
+    <div class="section-divider"></div>
+
+
+    <!-- TAKEAWAY -->
+
+    <section class="case-section">
+
+        <h2>
+            Takeaway
+        </h2>
+
+        <div class="case-content">
+
+            <p>
+                This exercise focused on creating a visual identity and
+                interface that communicate warmth and trust while keeping
+                the adoption journey clear and approachable.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- MORE -->
+
+    <section class="practice-next-projects">
+
+        <p class="case-label">
+            MORE DESIGN PRACTICE
+        </p>
+
+        <div class="practice-next-links">
+
+            <a href="practice-crumbs.html">
+                Crumbs &amp; Tails
+                <span>→</span>
+            </a>
+
+            <a href="tenebrae.html">
+                Tenebrae
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
 </body>
 
 </html>
