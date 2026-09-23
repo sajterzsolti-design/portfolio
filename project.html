@@ -224,85 +224,14 @@ async function loadProject() {
         }
 
 
-        /* ABOUT / OVERVIEW */
+        /* CASE STUDY SECTIONS */
 
-        const aboutSection =
-            project.case_about
-                ? `
-
-                    <div class="section-divider"></div>
-
-                    <section class="case-section">
-
-                        <h2>
-                            Overview
-                        </h2>
-
-                        <div class="case-content">
-
-                            ${formatParagraphs(project.case_about)}
-
-                        </div>
-
-                    </section>
-
-                `
-                : "";
-
-
-        /* DESIGN DIRECTION */
-
-        const directionSection =
-            project.case_direction
-                ? `
-
-                    <div class="section-divider"></div>
-
-                    <section class="case-section">
-
-                        <h2>
-                            Design Direction
-                        </h2>
-
-                        <div class="case-content">
-
-                            ${formatParagraphs(project.case_direction)}
-
-                        </div>
-
-                    </section>
-
-                `
-                : "";
-
-
-        /* CASE STUDY IMAGE */
-
-        const caseImageSection =
-            project.case_image_url
-                ? `
-
-                    <section class="final-image">
-
-                        <img
-                            src="${escapeHtml(project.case_image_url)}"
-                            alt="${escapeHtml(project.title || "Project")}"
-                        >
-
-                    </section>
-
-                `
-                : "";
-
-
-        /* ADDITIONAL CASE STUDY SECTIONS */
-
-        const additionalSections =
+        const caseSections =
             Array.isArray(project.case_sections)
                 ? project.case_sections
                 : [];
 
-        const additionalSectionsHtml = additionalSections
+        const caseSectionsHtml = caseSections
             .map((section) => {
                 const title = escapeHtml(section.title || "");
                 const content = formatParagraphs(section.content || "");
@@ -311,7 +240,7 @@ async function loadProject() {
                         <section class="final-image">
                             <img
                                 src="${escapeHtml(section.image_url)}"
-                                alt="${escapeHtml(section.image_alt || section.title || "Case study image")}" 
+                                alt="${escapeHtml(section.image_alt || section.title || "Case study image")}"
                             >
                         </section>
                     `
@@ -329,32 +258,6 @@ async function loadProject() {
                 `;
             })
             .join("");
-
-        /* TAKEAWAYS */
-
-        const takeawaySection =
-            project.case_takeaway
-                ? `
-
-                    <div class="section-divider"></div>
-
-                    <section class="case-section">
-
-                        <h2>
-                            Takeaways
-                        </h2>
-
-                        <div class="case-content">
-
-                            ${formatParagraphs(project.case_takeaway)}
-
-                        </div>
-
-                    </section>
-
-                `
-                : "";
-
 
 
         /* RENDER */
@@ -410,19 +313,7 @@ async function loadProject() {
             }
 
 
-            ${aboutSection}
-
-
-            ${directionSection}
-
-
-            ${caseImageSection}
-
-
-            ${additionalSectionsHtml}
-
-
-            ${takeawaySection}
+            ${caseSectionsHtml}
 
 
         `;
