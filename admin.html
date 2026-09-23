@@ -511,38 +511,7 @@
                     placeholder="e.g. Self-initiated"
                 >
 
-
-                <label class="form-label" for="project-case-about">
-                    About the Project
-                </label>
-
-                <textarea
-                    id="project-case-about"
-                    placeholder="Describe the project..."
-                ></textarea>
-
-
-                <label class="form-label" for="project-case-direction">
-                    Design Direction
-                </label>
-
-                <textarea
-                    id="project-case-direction"
-                    placeholder="Describe the design direction..."
-                ></textarea>
-
-
-                <label class="form-label" for="project-case-takeaway">
-                    Takeaway
-                </label>
-
-                <textarea
-                    id="project-case-takeaway"
-                    placeholder="What did you learn from this project?"
-                ></textarea>
-
-
-                <label class="form-label" for="project-case-timeline">
+<label class="form-label" for="project-case-timeline">
                     Timeline
                 </label>
 
@@ -553,11 +522,11 @@
                 >
 
 
-                <div id="legacy-sections-wrapper" style="display:none;">
+                <div id="case-sections-wrapper" style="display:none;">
 
                     <div class="legacy-sections-header">
                         <h3>Case Study Sections</h3>
-                        <p>Edit existing sections or add new ones for any project.</p>
+                        <p>Create, edit, reorder, or remove any case study section.</p>
                         <button type="button" onclick="addCaseSection()">+ Add Section</button>
                     </div>
 
@@ -1084,23 +1053,6 @@
            STATIC CASE STUDY SECTIONS
         ================================= */
 
-        function isStaticCaseProject(table, projectUrl) {
-            const staticUrls = new Set([
-                "arteum-mobile.html",
-                "arteum-web.html",
-                "meditime.html",
-                "practice-crumbs.html",
-                "pet-haven.html",
-                "tenebrae.html"
-            ]);
-
-            return (
-                (table === "projects" || table === "practice_projects") &&
-                staticUrls.has((projectUrl || "").trim())
-            );
-        }
-
-
         function escapeAttribute(value) {
             return String(value ?? "")
                 .replace(/&/g, "&amp;")
@@ -1111,8 +1063,8 @@
         }
 
 
-        function renderLegacySections(sections) {
-            const wrapper = document.getElementById("legacy-sections-wrapper");
+        function renderCaseSections(sections) {
+            const wrapper = document.getElementById("case-sections-wrapper");
             const container = document.getElementById("case-sections-editor");
 
             if (!wrapper || !container) return;
@@ -1141,13 +1093,13 @@
                     <label class="form-label">Section Title</label>
                     <input
                         type="text"
-                        class="legacy-section-title"
+                        class="case-section-title"
                         value="${escapeAttribute(section.title || "")}" 
                     >
 
                     <label class="form-label">Content</label>
                     <textarea
-                        class="legacy-section-content"
+                        class="case-section-content"
                         placeholder="Separate paragraphs with a blank line.\n\nExample paragraph one.\n\nExample paragraph two."
                     >${escapeHtml(section.content || "")}</textarea>
 
@@ -1162,7 +1114,7 @@
                     <label class="form-label">Section Image</label>
                     <input
                         type="file"
-                        class="legacy-section-image"
+                        class="case-section-image"
                         accept="image/*"
                     >
 
@@ -1201,18 +1153,18 @@
                 <h4>Section 1</h4>
 
                 <label class="form-label">Section Title</label>
-                <input type="text" class="legacy-section-title" value="">
+                <input type="text" class="case-section-title" value="">
 
                 <label class="form-label">Content</label>
                 <textarea
-                    class="legacy-section-content"
+                    class="case-section-content"
                     placeholder="Separate paragraphs with a blank line.\n\nExample paragraph one.\n\nExample paragraph two."
                 ></textarea>
 
                 <label class="form-label">Section Image</label>
                 <input
                     type="file"
-                    class="legacy-section-image"
+                    class="case-section-image"
                     accept="image/*"
                 >
 
@@ -1262,7 +1214,7 @@
         }
 
 
-        function getLegacySectionsFromForm(oldSections) {
+        function getCaseSectionsFromForm(oldSections) {
             return Array.from(
                 document.querySelectorAll(".case-section-editor")
             ).map((editor) => {
@@ -1273,11 +1225,11 @@
 
                 return {
                     title: editor
-                        .querySelector(".legacy-section-title")
+                        .querySelector(".case-section-title")
                         ?.value
                         .trim() || "",
                     content: editor
-                        .querySelector(".legacy-section-content")
+                        .querySelector(".case-section-content")
                         ?.value
                         .trim() || "",
                     image_url: oldSection?.image_url || null,
@@ -1371,7 +1323,7 @@
                 .getElementById("project-case-timeline")
                 .value = "";
 
-            renderLegacySections([]);
+            renderCaseSections([]);
 
             document
                 .getElementById("editor-modal")
@@ -1467,21 +1419,6 @@
                         project.case_project || "";
 
                 document
-                    .getElementById("project-case-about")
-                    .value =
-                        project.case_about || "";
-
-                document
-                    .getElementById("project-case-direction")
-                    .value =
-                        project.case_direction || "";
-
-                document
-                    .getElementById("project-case-takeaway")
-                    .value =
-                        project.case_takeaway || "";
-
-                document
                     .getElementById("project-url")
                     .value =
                         project.project_url || "";
@@ -1491,7 +1428,7 @@
                     .value =
                         project.case_timeline || "";
 
-                renderLegacySections(project.case_sections || []);
+                renderCaseSections(project.case_sections || []);
 
                 document
                     .getElementById("project-featured")
@@ -1842,9 +1779,9 @@
                     }
 
 
-                    /* LEGACY CASE SECTIONS */
+                    /* CASE STUDY SECTIONS */
 
-                    let caseSections = getLegacySectionsFromForm(
+                    let caseSections = getCaseSectionsFromForm(
                         oldProject?.case_sections || []
                     );
 
@@ -1854,7 +1791,7 @@
 
                     for (let i = 0; i < editors.length; i++) {
                         const fileInput =
-                            editors[i].querySelector(".legacy-section-image");
+                            editors[i].querySelector(".case-section-image");
 
                         const file = fileInput?.files?.[0];
 
@@ -1907,24 +1844,6 @@
                         case_project:
                             document
                                 .getElementById("project-case-project")
-                                .value
-                                .trim() || null,
-
-                        case_about:
-                            document
-                                .getElementById("project-case-about")
-                                .value
-                                .trim() || null,
-
-                        case_direction:
-                            document
-                                .getElementById("project-case-direction")
-                                .value
-                                .trim() || null,
-
-                        case_takeaway:
-                            document
-                                .getElementById("project-case-takeaway")
                                 .value
                                 .trim() || null,
 
