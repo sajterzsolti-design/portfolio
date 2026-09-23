@@ -1082,10 +1082,11 @@ header{
     }
 
     .hero-image{
-        width:100%;
-        max-width:320px;
-        height:auto;
-    }
+    width:100%;
+    max-width:320px;
+    height:auto;
+    overflow:hidden;
+}
 
     .hero-image img{
         width:100%;
