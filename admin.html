@@ -240,6 +240,17 @@
             line-height: 1.5;
         }
 
+        .legacy-sections-header button {
+            margin-top: 4px;
+        }
+
+        .section-editor-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
         .case-section-editor {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -546,7 +557,8 @@
 
                     <div class="legacy-sections-header">
                         <h3>Case Study Sections</h3>
-                        <p>For the existing static HTML projects, these sections control the content shown on the case study page.</p>
+                        <p>Edit existing sections or add new ones for any project.</p>
+                        <button type="button" onclick="addCaseSection()">+ Add Section</button>
                     </div>
 
                     <div id="case-sections-editor"></div>
@@ -1105,71 +1117,173 @@
 
             if (!wrapper || !container) return;
 
-            if (!Array.isArray(sections) || !sections.length) {
-                wrapper.style.display = "none";
-                container.innerHTML = "";
-                return;
-            }
+            const safeSections = Array.isArray(sections) ? sections : [];
 
             wrapper.style.display = "block";
 
-            container.innerHTML = sections.map((section, index) => `
-                <div class="case-section-editor" data-section-index="${index}">
+            if (!safeSections.length) {
+                container.innerHTML = `
+                    <p style="color:#666; margin:0 0 15px;">
+                        No sections yet. Use <strong>+ Add Section</strong> to create the first one.
+                    </p>
+                `;
+                return;
+            }
+
+            container.innerHTML = safeSections.map((section, index) => `
+                <div
+                    class="case-section-editor"
+                    data-section-index="${index}"
+                    data-original-index="${index}"
+                >
                     <h4>Section ${index + 1}</h4>
 
                     <label class="form-label">Section Title</label>
                     <input
                         type="text"
                         class="legacy-section-title"
-                        value="${escapeAttribute(section.title || "")}"
+                        value="${escapeAttribute(section.title || "")}" 
                     >
 
                     <label class="form-label">Content</label>
                     <textarea
                         class="legacy-section-content"
-                        placeholder="Separate paragraphs with a blank line.
-
-Example paragraph one.
-
-Example paragraph two."
+                        placeholder="Separate paragraphs with a blank line.\n\nExample paragraph one.\n\nExample paragraph two."
                     >${escapeHtml(section.content || "")}</textarea>
 
                     <label class="form-label">Current Section Image</label>
                     <img
                         class="section-current-image"
                         alt="Current section image"
-                        src="${escapeAttribute(section.image_url || "")}"
+                        src="${escapeAttribute(section.image_url || "")}" 
                         style="${section.image_url ? "display:block;" : "display:none;"}"
                     >
 
-                    <label class="form-label">Replace Section Image</label>
+                    <label class="form-label">Section Image</label>
                     <input
                         type="file"
                         class="legacy-section-image"
                         accept="image/*"
                     >
+
+                    <div class="section-editor-actions">
+                        <button type="button" onclick="moveCaseSection(this, -1)">↑</button>
+                        <button type="button" onclick="moveCaseSection(this, 1)">↓</button>
+                        <button type="button" class="danger-button" onclick="removeCaseSection(this)">Delete Section</button>
+                    </div>
                 </div>
             `).join("");
         }
 
 
-        function getLegacySectionsFromForm(oldSections) {
-            const editors = Array.from(
-                document.querySelectorAll(".case-section-editor")
-            );
+        function updateCaseSectionNumbers() {
+            document
+                .querySelectorAll(".case-section-editor")
+                .forEach((editor, index) => {
+                    editor.dataset.sectionIndex = index;
+                    const heading = editor.querySelector("h4");
+                    if (heading) heading.textContent = `Section ${index + 1}`;
+                });
+        }
 
-            return editors.map((editor, index) => ({
-                title: editor
-                    .querySelector(".legacy-section-title")
-                    ?.value
-                    .trim() || "",
-                content: editor
-                    .querySelector(".legacy-section-content")
-                    ?.value
-                    .trim() || "",
-                image_url: oldSections?.[index]?.image_url || null,
-                image_alt: oldSections?.[index]?.image_alt || ""
-            }));
+
+        function addCaseSection() {
+            const container = document.getElementById("case-sections-editor");
+            if (!container) return;
+
+            const emptyMessage = container.querySelector("p");
+            if (emptyMessage) emptyMessage.remove();
+
+            const editor = document.createElement("div");
+            editor.className = "case-section-editor";
+            editor.dataset.originalIndex = "-1";
+            editor.innerHTML = `
+                <h4>Section 1</h4>
+
+                <label class="form-label">Section Title</label>
+                <input type="text" class="legacy-section-title" value="">
+
+                <label class="form-label">Content</label>
+                <textarea
+                    class="legacy-section-content"
+                    placeholder="Separate paragraphs with a blank line.\n\nExample paragraph one.\n\nExample paragraph two."
+                ></textarea>
+
+                <label class="form-label">Section Image</label>
+                <input
+                    type="file"
+                    class="legacy-section-image"
+                    accept="image/*"
+                >
+
+                <div class="section-editor-actions">
+                    <button type="button" onclick="moveCaseSection(this, -1)">↑</button>
+                    <button type="button" onclick="moveCaseSection(this, 1)">↓</button>
+                    <button type="button" class="danger-button" onclick="removeCaseSection(this)">Delete Section</button>
+                </div>
+            `;
+
+            container.appendChild(editor);
+            updateCaseSectionNumbers();
+        }
+
+
+        function removeCaseSection(button) {
+            const editor = button.closest(".case-section-editor");
+            if (!editor) return;
+
+            editor.remove();
+            updateCaseSectionNumbers();
+
+            const container = document.getElementById("case-sections-editor");
+            if (container && !container.querySelector(".case-section-editor")) {
+                container.innerHTML = `
+                    <p style="color:#666; margin:0 0 15px;">
+                        No sections yet. Use <strong>+ Add Section</strong> to create the first one.
+                    </p>
+                `;
+            }
+        }
+
+
+        function moveCaseSection(button, direction) {
+            const editor = button.closest(".case-section-editor");
+            if (!editor) return;
+
+            if (direction < 0 && editor.previousElementSibling?.classList.contains("case-section-editor")) {
+                editor.parentNode.insertBefore(editor, editor.previousElementSibling);
+            }
+
+            if (direction > 0 && editor.nextElementSibling?.classList.contains("case-section-editor")) {
+                editor.parentNode.insertBefore(editor.nextElementSibling, editor);
+            }
+
+            updateCaseSectionNumbers();
+        }
+
+
+        function getLegacySectionsFromForm(oldSections) {
+            return Array.from(
+                document.querySelectorAll(".case-section-editor")
+            ).map((editor) => {
+                const originalIndex = Number(editor.dataset.originalIndex);
+                const oldSection = Number.isInteger(originalIndex) && originalIndex >= 0
+                    ? oldSections?.[originalIndex]
+                    : null;
+
+                return {
+                    title: editor
+                        .querySelector(".legacy-section-title")
+                        ?.value
+                        .trim() || "",
+                    content: editor
+                        .querySelector(".legacy-section-content")
+                        ?.value
+                        .trim() || "",
+                    image_url: oldSection?.image_url || null,
+                    image_alt: oldSection?.image_alt || ""
+                };
+            });
         }
 
 
@@ -1257,15 +1371,7 @@ Example paragraph two."
                 .getElementById("project-case-timeline")
                 .value = "";
 
-            const legacyWrapper = document.getElementById("legacy-sections-wrapper");
-            if (legacyWrapper) {
-                legacyWrapper.style.display = "none";
-            }
-
-            const legacyEditor = document.getElementById("case-sections-editor");
-            if (legacyEditor) {
-                legacyEditor.innerHTML = "";
-            }
+            renderLegacySections([]);
 
             document
                 .getElementById("editor-modal")
@@ -1385,11 +1491,7 @@ Example paragraph two."
                     .value =
                         project.case_timeline || "";
 
-                if (isStaticCaseProject(table, project.project_url)) {
-                    renderLegacySections(project.case_sections || []);
-                } else {
-                    renderLegacySections([]);
-                }
+                renderLegacySections(project.case_sections || []);
 
                 document
                     .getElementById("project-featured")
@@ -1742,30 +1844,26 @@ Example paragraph two."
 
                     /* LEGACY CASE SECTIONS */
 
-                    let caseSections = oldProject?.case_sections || [];
+                    let caseSections = getLegacySectionsFromForm(
+                        oldProject?.case_sections || []
+                    );
 
-                    if (isStaticCaseProject(currentTable, projectUrl)) {
-                        caseSections = getLegacySectionsFromForm(
-                            oldProject?.case_sections || []
-                        );
+                    const editors = Array.from(
+                        document.querySelectorAll(".case-section-editor")
+                    );
 
-                        const editors = Array.from(
-                            document.querySelectorAll(".case-section-editor")
-                        );
+                    for (let i = 0; i < editors.length; i++) {
+                        const fileInput =
+                            editors[i].querySelector(".legacy-section-image");
 
-                        for (let i = 0; i < editors.length; i++) {
-                            const fileInput =
-                                editors[i].querySelector(".legacy-section-image");
+                        const file = fileInput?.files?.[0];
 
-                            const file = fileInput?.files?.[0];
-
-                            if (file) {
-                                caseSections[i].image_url =
-                                    await uploadPortfolioImage(
-                                        file,
-                                        `Section ${i + 1} image upload failed`
-                                    );
-                            }
+                        if (file) {
+                            caseSections[i].image_url =
+                                await uploadPortfolioImage(
+                                    file,
+                                    `Section ${i + 1} image upload failed`
+                                );
                         }
                     }
 
@@ -1955,17 +2053,19 @@ Example paragraph two."
                             );
                         }
 
-                        if (isStaticCaseProject(currentTable, projectUrl)) {
-                            const oldSections = oldProject?.case_sections || [];
-                            const newSections = projectData.case_sections || [];
+                        const oldSectionUrls = (oldProject?.case_sections || [])
+                            .map(section => section?.image_url)
+                            .filter(Boolean);
 
-                            for (let i = 0; i < oldSections.length; i++) {
-                                const oldUrl = oldSections[i]?.image_url;
-                                const newUrl = newSections[i]?.image_url;
+                        const newSectionUrls = new Set(
+                            (projectData.case_sections || [])
+                                .map(section => section?.image_url)
+                                .filter(Boolean)
+                        );
 
-                                if (oldUrl && oldUrl !== newUrl && newUrl) {
-                                    await deleteStorageImage(oldUrl);
-                                }
+                        for (const oldUrl of oldSectionUrls) {
+                            if (!newSectionUrls.has(oldUrl)) {
+                                await deleteStorageImage(oldUrl);
                             }
                         }
                     }
