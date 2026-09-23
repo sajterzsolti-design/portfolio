@@ -15,6 +15,71 @@
         rel="stylesheet"
     >
 
+    <style>
+
+        /* IMAGE LIGHTBOX */
+
+        .case-image-clickable {
+            cursor: zoom-in;
+        }
+
+        #image-lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        #image-lightbox.open {
+            display: flex;
+        }
+
+        #image-lightbox img {
+            max-width: 95vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #image-lightbox-close {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            border: none;
+            background: none;
+            color: white;
+            font-size: 38px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        @media (max-width: 600px) {
+
+            #image-lightbox {
+                padding: 15px;
+            }
+
+            #image-lightbox img {
+                max-width: 100%;
+                max-height: 85vh;
+            }
+
+            #image-lightbox-close {
+                top: 10px;
+                right: 12px;
+                font-size: 32px;
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
@@ -31,7 +96,7 @@
 </nav>
 
 
-<main id="project-container" style="visibility: hidden;">
+<main id="project-container">
 
 </main>
 
@@ -100,8 +165,6 @@ async function loadProject() {
         container.innerHTML =
             "<p>Project not found.</p>";
 
-        container.style.visibility = "visible";
-
         return;
     }
 
@@ -133,8 +196,6 @@ async function loadProject() {
             container.innerHTML =
                 "<p>Failed to load project.</p>";
 
-            container.style.visibility = "visible";
-
             return;
         }
 
@@ -147,8 +208,6 @@ async function loadProject() {
 
             container.innerHTML =
                 "<p>Project not found.</p>";
-
-            container.style.visibility = "visible";
 
             return;
         }
@@ -170,6 +229,7 @@ async function loadProject() {
                     <div class="hero-mockup">
 
                         <img
+                            class="case-image-clickable"
                             src="${escapeHtml(project.hero_image_url || project.image_url)}"
                             alt="${escapeHtml(project.title || "Project")}"
                         >
@@ -235,47 +295,55 @@ async function loadProject() {
                 ? project.case_sections
                 : [];
 
-        const caseSectionsHtml = caseSections
-            .map((section) => {
+        const caseSectionsHtml =
+            caseSections
+                .map((section) => {
 
-                const title =
-                    escapeHtml(section.title || "");
+                    const title =
+                        escapeHtml(section.title || "");
 
-                const content =
-                    formatParagraphs(section.content || "");
+                    const content =
+                        formatParagraphs(section.content || "");
 
-                const image =
-                    section.image_url
-                        ? `
-                            <section class="final-image">
+                    const image =
+                        section.image_url
+                            ? `
+                                <section class="final-image">
 
-                                <img
-                                    src="${escapeHtml(section.image_url)}"
-                                    alt="${escapeHtml(section.image_alt || section.title || "Case study image")}"
-                                >
+                                    <img
+                                        class="case-image-clickable"
+                                        src="${escapeHtml(section.image_url)}"
+                                        alt="${escapeHtml(
+                                            section.image_alt ||
+                                            section.title ||
+                                            "Case study image"
+                                        )}"
+                                    >
 
-                            </section>
-                        `
-                        : "";
+                                </section>
+                            `
+                            : "";
 
-                return `
-                    <div class="section-divider"></div>
+                    return `
+                        <div class="section-divider"></div>
 
-                    <section class="case-section">
+                        <section class="case-section">
 
-                        <h2>${title}</h2>
+                            <h2>
+                                ${title}
+                            </h2>
 
-                        <div class="case-content">
-                            ${content}
-                        </div>
+                            <div class="case-content">
+                                ${content}
+                            </div>
 
-                    </section>
+                        </section>
 
-                    ${image}
-                `;
+                        ${image}
+                    `;
 
-            })
-            .join("");
+                })
+                .join("");
 
 
         /* RENDER */
@@ -300,7 +368,9 @@ async function loadProject() {
 
                     <h1>
 
-                        ${escapeHtml(project.title || "")}
+                        ${escapeHtml(
+                            project.title || ""
+                        )}
 
                     </h1>
 
@@ -346,8 +416,7 @@ async function loadProject() {
 
         `;
 
-
-        container.style.visibility = "visible";
+        setupImageLightbox();
 
     }
 
@@ -361,9 +430,104 @@ async function loadProject() {
         container.innerHTML =
             "<p>Failed to load project.</p>";
 
-        container.style.visibility = "visible";
-
     }
+
+}
+
+
+function setupImageLightbox() {
+
+    const images =
+        document.querySelectorAll(
+            ".case-image-clickable"
+        );
+
+    const lightbox =
+        document.getElementById(
+            "image-lightbox"
+        );
+
+    const lightboxImage =
+        document.getElementById(
+            "image-lightbox-image"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "image-lightbox-close"
+        );
+
+
+    images.forEach(image => {
+
+        image.addEventListener(
+            "click",
+            function() {
+
+                lightboxImage.src =
+                    image.src;
+
+                lightboxImage.alt =
+                    image.alt || "";
+
+                lightbox.classList.add(
+                    "open"
+                );
+
+            }
+        );
+
+    });
+
+
+    closeButton.addEventListener(
+        "click",
+        function() {
+
+            lightbox.classList.remove(
+                "open"
+            );
+
+            lightboxImage.src = "";
+
+        }
+    );
+
+
+    lightbox.addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === lightbox) {
+
+                lightbox.classList.remove(
+                    "open"
+                );
+
+                lightboxImage.src = "";
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Escape") {
+
+                lightbox.classList.remove(
+                    "open"
+                );
+
+                lightboxImage.src = "";
+
+            }
+
+        }
+    );
 
 }
 
@@ -375,10 +539,10 @@ loadProject();
 
 <!-- IMAGE LIGHTBOX -->
 
-<div id="lightbox" class="lightbox">
+<div id="image-lightbox">
 
     <button
-        class="lightbox-close"
+        id="image-lightbox-close"
         type="button"
         aria-label="Close image"
     >
@@ -386,101 +550,12 @@ loadProject();
     </button>
 
     <img
-        id="lightbox-image"
+        id="image-lightbox-image"
         src=""
         alt=""
     >
 
 </div>
-
-
-<script>
-
-const lightbox =
-    document.getElementById("lightbox");
-
-const lightboxImage =
-    document.getElementById("lightbox-image");
-
-const lightboxClose =
-    document.querySelector(".lightbox-close");
-
-
-function openLightbox(image) {
-
-    lightboxImage.src = image.src;
-
-    lightboxImage.alt =
-        image.alt || "";
-
-    lightbox.classList.add("show");
-
-}
-
-
-function closeLightbox() {
-
-    lightbox.classList.remove("show");
-
-    lightboxImage.src = "";
-
-}
-
-
-document.addEventListener(
-    "click",
-    function(event) {
-
-        const image =
-            event.target.closest("img");
-
-        if (
-            image &&
-            !image.closest(".lightbox")
-        ) {
-
-            openLightbox(image);
-
-        }
-
-    }
-);
-
-
-lightboxClose.addEventListener(
-    "click",
-    closeLightbox
-);
-
-
-lightbox.addEventListener(
-    "click",
-    function(event) {
-
-        if (event.target === lightbox) {
-
-            closeLightbox();
-
-        }
-
-    }
-);
-
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (event.key === "Escape") {
-
-            closeLightbox();
-
-        }
-
-    }
-);
-
-</script>
 
 
 </body>
