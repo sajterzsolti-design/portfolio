@@ -201,15 +201,41 @@
             margin-top: 20px;
         }
 
+        .image-preview-wrapper {
+            position: relative;
+            width: fit-content;
+            margin-bottom: 15px;
+        }
+
         #current-image,
-        #current-hero-image,
-        #current-case-image {
+        #current-hero-image {
             max-width: 200px;
             max-height: 150px;
             display: none;
             object-fit: cover;
-            margin-bottom: 15px;
+            margin: 0;
             border-radius: 5px;
+        }
+
+        .image-remove-button {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            font-size: 18px;
+            line-height: 26px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .image-remove-button:hover {
+            background: rgba(0, 0, 0, 0.9);
         }
 
         .error-message {
@@ -527,10 +553,17 @@
                     <div class="legacy-sections-header">
                         <h3>Case Study Sections</h3>
                         <p>Create, edit, reorder, or remove any case study section.</p>
-                        <button type="button" onclick="addCaseSection()">+ Add Section</button>
                     </div>
 
                     <div id="case-sections-editor"></div>
+
+                    <button
+                        type="button"
+                        id="add-case-section-button"
+                        onclick="addCaseSection()"
+                    >
+                        + Add Section
+                    </button>
 
                 </div>
 
@@ -550,10 +583,20 @@
                     Current Card Image
                 </label>
 
-                <img
-                    id="current-image"
-                    alt="Current card image"
-                >
+                <div class="image-preview-wrapper" id="current-image-wrapper" style="display:none;">
+                    <img
+                        id="current-image"
+                        alt="Current card image"
+                    >
+                    <button
+                        type="button"
+                        class="image-remove-button"
+                        onclick="removeCurrentImage('card')"
+                        aria-label="Remove current card image"
+                    >
+                        ×
+                    </button>
+                </div>
 
                 <label class="form-label" for="project-image">
                     Card Image
@@ -569,10 +612,20 @@
                     Current Hero Image
                 </label>
 
-                <img
-                    id="current-hero-image"
-                    alt="Current hero image"
-                >
+                <div class="image-preview-wrapper" id="current-hero-image-wrapper" style="display:none;">
+                    <img
+                        id="current-hero-image"
+                        alt="Current hero image"
+                    >
+                    <button
+                        type="button"
+                        class="image-remove-button"
+                        onclick="removeCurrentImage('hero')"
+                        aria-label="Remove current hero image"
+                    >
+                        ×
+                    </button>
+                </div>
 
                 <label class="form-label" for="project-hero-image">
                     Hero Image
@@ -581,25 +634,6 @@
                 <input
                     type="file"
                     id="project-hero-image"
-                    accept="image/*"
-                >
-
-                <label class="form-label">
-                    Current Case Study Image
-                </label>
-
-                <img
-                    id="current-case-image"
-                    alt="Current case study image"
-                >
-
-                <label class="form-label" for="project-case-image">
-                    Case Study Image
-                </label>
-
-                <input
-                    type="file"
-                    id="project-case-image"
                     accept="image/*"
                 >
 
@@ -668,6 +702,8 @@
         let refreshTimer = null;
         let currentTable = null;
         let currentProjectId = null;
+        let cardImageRemoved = false;
+        let heroImageRemoved = false;
 
 
         /* =================================
@@ -1177,6 +1213,14 @@
 
             container.appendChild(editor);
             updateCaseSectionNumbers();
+
+            const addButton = document.getElementById("add-case-section-button");
+            if (addButton) {
+                addButton.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+            }
         }
 
 
@@ -1273,6 +1317,30 @@
         }
 
 
+        function removeCurrentImage(type) {
+            const isCard = type === "card";
+            const imageId = isCard
+                ? "current-image"
+                : "current-hero-image";
+            const wrapperId = isCard
+                ? "current-image-wrapper"
+                : "current-hero-image-wrapper";
+
+            if (isCard) {
+                cardImageRemoved = true;
+            } else {
+                heroImageRemoved = true;
+            }
+
+            const image = document.getElementById(imageId);
+            const wrapper = document.getElementById(wrapperId);
+
+            image.removeAttribute("src");
+            image.style.display = "none";
+            wrapper.style.display = "none";
+        }
+
+
         /* =================================
            ADD
         ================================= */
@@ -1295,8 +1363,14 @@
                         ? "Add Project"
                         : "Add Practice Project";
 
+            cardImageRemoved = false;
+            heroImageRemoved = false;
+
             document
                 .getElementById("current-image")
+                .style.display = "none";
+            document
+                .getElementById("current-image-wrapper")
                 .style.display = "none";
 
             document
@@ -1306,17 +1380,12 @@
             document
                 .getElementById("current-hero-image")
                 .style.display = "none";
-
             document
-                .getElementById("project-hero-image")
-                .value = "";
-
-            document
-                .getElementById("current-case-image")
+                .getElementById("current-hero-image-wrapper")
                 .style.display = "none";
 
             document
-                .getElementById("project-case-image")
+                .getElementById("project-hero-image")
                 .value = "";
 
             document
@@ -1365,6 +1434,8 @@
 
                 currentTable = table;
                 currentProjectId = id;
+                cardImageRemoved = false;
+                heroImageRemoved = false;
 
                 document
                     .getElementById("modal-title")
@@ -1445,10 +1516,8 @@
                         "current-image"
                     );
 
-                const currentCaseImage =
-                    document.getElementById(
-                        "current-case-image"
-                    );
+                const currentImageWrapper =
+                    document.getElementById("current-image-wrapper");
 
                 if (project.image_url) {
                     currentImage.src =
@@ -1456,9 +1525,13 @@
 
                     currentImage.style.display =
                         "block";
+                    currentImageWrapper.style.display =
+                        "block";
                 } else {
                     currentImage.removeAttribute("src");
                     currentImage.style.display =
+                        "none";
+                    currentImageWrapper.style.display =
                         "none";
                 }
 
@@ -1469,31 +1542,21 @@
                 const currentHeroImage =
                     document.getElementById("current-hero-image");
 
+                const currentHeroImageWrapper =
+                    document.getElementById("current-hero-image-wrapper");
+
                 if (project.hero_image_url) {
                     currentHeroImage.src = project.hero_image_url;
                     currentHeroImage.style.display = "block";
+                    currentHeroImageWrapper.style.display = "block";
                 } else {
                     currentHeroImage.removeAttribute("src");
                     currentHeroImage.style.display = "none";
+                    currentHeroImageWrapper.style.display = "none";
                 }
 
                 document
                     .getElementById("project-hero-image")
-                    .value = "";
-
-                if (project.case_image_url) {
-                    currentCaseImage.src =
-                        project.case_image_url;
-                    currentCaseImage.style.display =
-                        "block";
-                } else {
-                    currentCaseImage.removeAttribute("src");
-                    currentCaseImage.style.display =
-                        "none";
-                }
-
-                document
-                    .getElementById("project-case-image")
                     .value = "";
 
                 document
@@ -1623,22 +1686,20 @@
                     /* IMAGE */
 
                     let imageUrl =
-                        oldProject?.image_url || null;
+                        cardImageRemoved
+                            ? null
+                            : (oldProject?.image_url || null);
 
                     let oldImageUrl =
                         oldProject?.image_url || null;
 
                     let heroImageUrl =
-                        oldProject?.hero_image_url || null;
+                        heroImageRemoved
+                            ? null
+                            : (oldProject?.hero_image_url || null);
 
                     let oldHeroImageUrl =
                         oldProject?.hero_image_url || null;
-
-                    let caseImageUrl =
-                        oldProject?.case_image_url || null;
-
-                    let oldCaseImageUrl =
-                        oldProject?.case_image_url || null;
 
                     const imageFile =
                         document
@@ -1648,11 +1709,6 @@
                     const heroImageFile =
                         document
                             .getElementById("project-hero-image")
-                            .files[0];
-
-                    const caseImageFile =
-                        document
-                            .getElementById("project-case-image")
                             .files[0];
 
 
@@ -1738,47 +1794,6 @@
                     }
 
 
-                    if (caseImageFile) {
-
-                        const extension =
-                            caseImageFile.name
-                                .split(".")
-                                .pop()
-                                .toLowerCase();
-
-                        const fileName =
-                            `${Date.now()}-${Math.random()
-                                .toString(36)
-                                .substring(2)}.${extension}`;
-
-                        const uploadResponse =
-                            await fetch(
-                                `${SUPABASE_URL}/storage/v1/object/portfolio-images/${fileName}`,
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "apikey": SUPABASE_KEY,
-                                        "Authorization":
-                                            `Bearer ${accessToken}`,
-                                        "Content-Type":
-                                            caseImageFile.type,
-                                        "x-upsert": "false"
-                                    },
-                                    body: caseImageFile
-                                }
-                            );
-
-                        if (!uploadResponse.ok) {
-                            throw new Error(
-                                `Case study image upload failed: ${await getErrorMessage(uploadResponse)}`
-                            );
-                        }
-
-                        caseImageUrl =
-                            `${SUPABASE_URL}/storage/v1/object/public/portfolio-images/${fileName}`;
-                    }
-
-
                     /* CASE STUDY SECTIONS */
 
                     let caseSections = getCaseSectionsFromForm(
@@ -1854,7 +1869,6 @@
                                 .trim() || null,
 
                         hero_image_url: heroImageUrl,
-                        case_image_url: caseImageUrl,
                         case_sections: caseSections
                     };
 
@@ -1943,7 +1957,6 @@
                         /* DELETE OLD IMAGE ONLY AFTER SUCCESSFUL UPDATE */
 
                         if (
-                            imageFile &&
                             oldImageUrl &&
                             imageUrl !== oldImageUrl
                         ) {
@@ -1953,22 +1966,11 @@
                         }
 
                         if (
-                            heroImageFile &&
                             oldHeroImageUrl &&
                             heroImageUrl !== oldHeroImageUrl
                         ) {
                             await deleteStorageImage(
                                 oldHeroImageUrl
-                            );
-                        }
-
-                        if (
-                            caseImageFile &&
-                            oldCaseImageUrl &&
-                            caseImageUrl !== oldCaseImageUrl
-                        ) {
-                            await deleteStorageImage(
-                                oldCaseImageUrl
                             );
                         }
 
