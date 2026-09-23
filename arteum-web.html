@@ -245,6 +245,50 @@
         }
     }
 
+    function renderAdditionalSections(sections, existingCount) {
+        const existing = document.getElementById("cms-extra-sections");
+
+        if (existing) existing.remove();
+
+        const extras = sections.slice(existingCount);
+        if (!extras.length) return;
+
+        const wrapper = document.createElement("div");
+        wrapper.id = "cms-extra-sections";
+
+        extras.forEach((section) => {
+            const divider = document.createElement("div");
+            divider.className = "section-divider";
+            wrapper.appendChild(divider);
+
+            const sectionEl = document.createElement("section");
+            sectionEl.className = "case-section";
+
+            const heading = document.createElement("h2");
+            heading.textContent = section.title || "";
+            sectionEl.appendChild(heading);
+
+            const content = document.createElement("div");
+            content.className = "case-content";
+            content.innerHTML = renderParagraphs(section.content || "");
+            sectionEl.appendChild(content);
+            wrapper.appendChild(sectionEl);
+
+            if (section.image_url) {
+                const imageBlock = document.createElement("section");
+                imageBlock.className = "final-image";
+                const img = document.createElement("img");
+                img.src = section.image_url;
+                img.alt = section.image_alt || section.title || "Case study image";
+                imageBlock.appendChild(img);
+                wrapper.appendChild(imageBlock);
+            }
+        });
+
+        document.body.insertBefore(wrapper, document.querySelector(".site-footer") || null);
+        if (!wrapper.parentNode) document.body.appendChild(wrapper);
+    }
+
     async function syncCms() {
         try {
             const response = await fetch(
@@ -295,6 +339,8 @@
             if (sections.length && pageSections.length) {
                 pageSections.forEach((sectionEl, index) => syncSection(sectionEl, sections[index]));
             }
+
+            renderAdditionalSections(sections, pageSections.length);
 
             document.title = `${project.title || document.title.replace(" | Case Study", "")} | Case Study`;
         } catch (error) {
