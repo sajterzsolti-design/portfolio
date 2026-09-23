@@ -295,6 +295,41 @@ async function loadProject() {
                 : "";
 
 
+        /* ADDITIONAL CASE STUDY SECTIONS */
+
+        const additionalSections =
+            Array.isArray(project.case_sections)
+                ? project.case_sections
+                : [];
+
+        const additionalSectionsHtml = additionalSections
+            .map((section) => {
+                const title = escapeHtml(section.title || "");
+                const content = formatParagraphs(section.content || "");
+                const image = section.image_url
+                    ? `
+                        <section class="final-image">
+                            <img
+                                src="${escapeHtml(section.image_url)}"
+                                alt="${escapeHtml(section.image_alt || section.title || "Case study image")}" 
+                            >
+                        </section>
+                    `
+                    : "";
+
+                return `
+                    <div class="section-divider"></div>
+                    <section class="case-section">
+                        <h2>${title}</h2>
+                        <div class="case-content">
+                            ${content}
+                        </div>
+                    </section>
+                    ${image}
+                `;
+            })
+            .join("");
+
         /* TAKEAWAYS */
 
         const takeawaySection =
@@ -382,6 +417,9 @@ async function loadProject() {
 
 
             ${caseImageSection}
+
+
+            ${additionalSectionsHtml}
 
 
             ${takeawaySection}
