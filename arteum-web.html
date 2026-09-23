@@ -174,6 +174,137 @@
 
     </section>
 
+
+<script>
+    /* CMS SYNC FOR STATIC CASE STUDY */
+    const CMS_URL = "https://emuudatwzvzwfvxyoeed.supabase.co";
+    const CMS_KEY = "sb_publishable_Y7AJ0hXo7N5Ycrp5UevuIA_DFL2NcC8";
+    const CMS_TABLE = "projects";
+    const CMS_PROJECT_URL = "arteum-web.html";
+
+    function cmsEscape(value) {
+        const div = document.createElement("div");
+        div.textContent = value ?? "";
+        return div.innerHTML;
+    }
+
+    function renderParagraphs(text) {
+        return String(text || "")
+            .trim()
+            .split(/\n\s*\n/)
+            .filter(Boolean)
+            .map(p => `<p>${cmsEscape(p).replace(/\n/g, "<br>")}</p>`)
+            .join("");
+    }
+
+    function syncText(selector, value) {
+        const el = document.querySelector(selector);
+        if (el && value != null && value !== "") el.textContent = value;
+    }
+
+    function syncSection(sectionEl, sectionData) {
+        if (!sectionData) {
+            sectionEl.style.display = "none";
+            return;
+        }
+
+        sectionEl.style.display = "";
+
+        const heading = sectionEl.querySelector("h2");
+        if (heading) heading.textContent = sectionData.title || "";
+
+        const content = sectionEl.querySelector(".case-content");
+        if (content) content.innerHTML = renderParagraphs(sectionData.content || "");
+
+        let sibling = sectionEl.nextElementSibling;
+        let imageBlock = null;
+
+        while (sibling) {
+            if (sibling.classList.contains("case-section")) break;
+            if (sibling.querySelector && sibling.querySelector("img") &&
+                (sibling.classList.contains("persona-image") ||
+                 sibling.classList.contains("wireframe-image") ||
+                 sibling.classList.contains("final-image") ||
+                 sibling.classList.contains("practice-full-image") ||
+                 sibling.classList.contains("practice-case-gallery"))) {
+                imageBlock = sibling;
+                break;
+            }
+            sibling = sibling.nextElementSibling;
+        }
+
+        if (imageBlock) {
+            const img = imageBlock.querySelector("img");
+            if (sectionData.image_url) {
+                imageBlock.style.display = "";
+                img.src = sectionData.image_url;
+                img.alt = sectionData.image_alt || sectionData.title || "Case study image";
+            } else {
+                imageBlock.style.display = "none";
+            }
+        }
+    }
+
+    async function syncCms() {
+        try {
+            const response = await fetch(
+                `${CMS_URL}/rest/v1/${CMS_TABLE}?project_url=eq.${encodeURIComponent(CMS_PROJECT_URL)}&select=*`,
+                { headers: { apikey: CMS_KEY } }
+            );
+
+            if (!response.ok) return;
+
+            const rows = await response.json();
+            const project = rows[0];
+            if (!project) return;
+
+            syncText(".case-label", project.category);
+            syncText(".hero-left h1, .practice-case-intro h1", project.title);
+            syncText(".hero-left .case-subtitle, .practice-case-intro .case-subtitle", project.case_subtitle);
+
+            const heroImg = document.querySelector(".hero-mockup img, .practice-case-image img");
+            if (heroImg && (project.hero_image_url || project.image_url)) {
+                heroImg.src = project.hero_image_url || project.image_url;
+                heroImg.alt = project.title || heroImg.alt;
+            }
+
+            const summary = document.querySelectorAll(".project-summary > div");
+            if (summary.length >= 4) {
+                const values = [
+                    project.case_type,
+                    project.case_timeline,
+                    project.case_tools,
+                    project.case_focus
+                ];
+                values.forEach((value, index) => {
+                    const h3 = summary[index]?.querySelector("h3");
+                    if (h3 && value) h3.textContent = value;
+                });
+
+                if (CMS_TABLE === "practice_projects") {
+                    const practiceValues = [project.case_type, project.case_focus, project.case_tools, project.case_project];
+                    practiceValues.forEach((value, index) => {
+                        const h3 = summary[index]?.querySelector("h3");
+                        if (h3 && value) h3.textContent = value;
+                    });
+                }
+            }
+
+            const sections = Array.isArray(project.case_sections) ? project.case_sections : [];
+            const pageSections = Array.from(document.querySelectorAll(".case-section"));
+            if (sections.length && pageSections.length) {
+                pageSections.forEach((sectionEl, index) => syncSection(sectionEl, sections[index]));
+            }
+
+            document.title = `${project.title || document.title.replace(" | Case Study", "")} | Case Study`;
+        } catch (error) {
+            console.warn("CMS sync unavailable; using static page content.", error);
+        }
+    }
+
+    syncCms();
+</script>
+
 </body>
 
 </html>
